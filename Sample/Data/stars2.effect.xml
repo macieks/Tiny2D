@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<effect>
+	<emitters>
+		<emitter
+			maxParticles="100"
+			localSimulation="false"
+			colorMap="Star.png">
+			<spawnArea type="point"/>
+			<emitterLifeTotal value="1"/>
+			<emitterCyclesTotal value="0"/>
+			<spawnCountOverEmitterLife value="60"/>
+			<lifeTotalOverEmitterLife min="1.0" max="3.0"/>
+			<sizeOverParticleLife value="15"/>
+			<velocityOverParticleLife>
+			  <key time="0" min="-130 -200" max="130 -100"/>
+			  <key time="0.6" min="-50 0" max="50 0"/>
+			  <key time="0.7" min="-30 100" max="30 150"/>
+			  <key time="0.9" min="-30 200" max="30 300"/>
+			</velocityOverParticleLife>
+			<colorOverParticleLife>
+			  <key time="0" value="1 0 0 0"/>
+			  <key time="0.1" value="1 0.1 0 1"/>
+			  <key time="0.2" value="1 0.2 0 0.2"/>
+			  <key time="0.3" value="1 0.3 0 1"/>
+			  <key time="0.4" value="1 0.5 0 0.2"/>
+			  <key time="0.5" value="1 0.7 0 1"/>
+			  <key time="0.6" value="1 0.9 0 0.2"/>
+			  <key time="0.7" value="1 1 0 1"/>
+			  <key time="0.8" value="1 1 0 0.2"/>
+			  <key time="0.9" value="1 1 0 1"/>
+			  <key time="1" value="1 1 1 0"/>
+			</colorOverParticleLife>
+			<initialRotationOverEmitterLife min="0" max="6.28"/>
+			<rotationSpeedOverParticleLife min="5" max="10"/>
+		</emitter>
+  </emitters>
+</effect>

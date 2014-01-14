@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<sprite material="common/default">
+  <animation name="idle_right" frameTime="0.3" isDefault="true">
+    <frame texture="HeroIdleRight_0.png"/>
+	<frame texture="HeroIdleRight_2.png"/>
+	<frame texture="HeroIdleRight_4.png"/>
+  </animation>
+  <animation name="idle_down" frameTime="0.3">
+    <frame texture="HeroIdleFront_0.png"/>
+	<frame texture="HeroIdleFront_2.png"/>
+	<frame texture="HeroIdleFront_4.png"/>
+  </animation>
+  <animation name="idle_up" frameTime="0.3">
+    <frame texture="HeroIdleBack_0.png"/>
+	<frame texture="HeroIdleBack_2.png"/>
+	<frame texture="HeroIdleBack_4.png"/>
+  </animation>
+  <animation name="walk_right" frameTime="0.3">
+    <frame texture="HeroWalkRight_0.png"/>
+	<frame texture="HeroWalkRight_2.png"/>
+	<frame texture="HeroWalkRight_4.png"/>
+	<frame texture="HeroWalkRight_6.png"/>
+  </animation>
+  <animation name="walk_down" frameTime="0.3">
+    <frame texture="HeroWalkFront_0.png"/>
+	<frame texture="HeroWalkFront_2.png"/>
+	<frame texture="HeroWalkFront_4.png"/>
+	<frame texture="HeroWalkFront_6.png"/>
+  </animation>
+  <animation name="walk_up" frameTime="0.3">
+    <frame texture="HeroWalkBack_0.png"/>
+	<frame texture="HeroWalkBack_2.png"/>
+	<frame texture="HeroWalkBack_4.png"/>
+	<frame texture="HeroWalkBack_6.png"/>
+  </animation>
+</sprite>

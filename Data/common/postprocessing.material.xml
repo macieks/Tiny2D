@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<material>
+	<technique name="copy_texture" blending="none">
+		<shader type="vertex" path="common/postprocessing.fx" entry="tex_vs"/>
+		<shader type="fragment" path="common/postprocessing.fx" entry="tex_fs"/>
+	</technique>
+	<technique name="quake" blending="none">
+		<shader type="vertex" path="common/postprocessing.fx" entry="quake_vs"/>
+		<shader type="fragment" path="common/postprocessing.fx" entry="tex_fs"/>
+	</technique>
+	<technique name="downsample2x2" blending="none">
+		<shader type="vertex" path="common/postprocessing.fx" entry="downsample2x2_vs"/>
+		<shader type="fragment" path="common/postprocessing.fx" entry="downsample2x2_fs"/>
+	</technique>
+	<technique name="blend" blending="none">
+		<shader type="vertex" path="common/postprocessing.fx" entry="tex_vs"/>
+		<shader type="fragment" path="common/postprocessing.fx" entry="blend_fs"/>
+	</technique>
+	<technique name="horizontal_blur" blending="none">
+		<shader type="vertex" path="common/postprocessing.fx" entry="tex_vs"/>
+		<shader type="fragment" path="common/postprocessing.fx" entry="horizontal_blur_fs"/>
+	</technique>
+	<technique name="vertical_blur" blending="none">
+		<shader type="vertex" path="common/postprocessing.fx" entry="tex_vs"/>
+		<shader type="fragment" path="common/postprocessing.fx" entry="vertical_blur_fs"/>
+	</technique>
+	<technique name="oldtv" blending="none">
+		<shader type="vertex" path="common/postprocessing.fx" entry="oldtv_vs"/>
+		<shader type="fragment" path="common/postprocessing.fx" entry="oldtv_fs"/>
+	</technique>
+	<technique name="rain_evaporation" blending="none">
+		<shader type="vertex" path="common/postprocessing.fx" entry="tex_vs"/>
+		<shader type="fragment" path="common/postprocessing.fx" entry="rain_evaporation_fs"/>
+	</technique>
+	<technique name="rain_distortion" blending="none">
+		<shader type="vertex" path="common/postprocessing.fx" entry="tex_vs"/>
+		<shader type="fragment" path="common/postprocessing.fx" entry="rain_distortion_fs"/>
+	</technique>
+</material>

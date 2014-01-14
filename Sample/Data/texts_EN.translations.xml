@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+	<group name="General">
+	    <translation name="Info" value="Hello :)
+Welcome to [name] sample.
+
+Use ARROWS to walk the character.
+Use MOUSE to move the cursor.
+Use SPACE to shake the screen."/>
+	</group>
+	<group name="LoadingScreen">
+		<translation name="Loading" value="Loading..."/>
+		<translation name="Continue" value="Press SPACE or tap the screen to continue"/>
+	</group>
+</translations>

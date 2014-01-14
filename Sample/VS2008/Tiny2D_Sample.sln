@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tiny2D_Sample", "Tiny2D_Sample.vcproj", "{FE7139FB-5687-4D1F-93A2-1907E3218175}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		DebugGLES|Win32 = DebugGLES|Win32
+		Release|Win32 = Release|Win32
+		ReleaseGLES|Win32 = ReleaseGLES|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE7139FB-5687-4D1F-93A2-1907E3218175}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FE7139FB-5687-4D1F-93A2-1907E3218175}.Debug|Win32.Build.0 = Debug|Win32
+		{FE7139FB-5687-4D1F-93A2-1907E3218175}.DebugGLES|Win32.ActiveCfg = DebugGLES|Win32
+		{FE7139FB-5687-4D1F-93A2-1907E3218175}.DebugGLES|Win32.Build.0 = DebugGLES|Win32
+		{FE7139FB-5687-4D1F-93A2-1907E3218175}.Release|Win32.ActiveCfg = Release|Win32
+		{FE7139FB-5687-4D1F-93A2-1907E3218175}.Release|Win32.Build.0 = Release|Win32
+		{FE7139FB-5687-4D1F-93A2-1907E3218175}.ReleaseGLES|Win32.ActiveCfg = ReleaseGLES|Win32
+		{FE7139FB-5687-4D1F-93A2-1907E3218175}.ReleaseGLES|Win32.Build.0 = ReleaseGLES|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
