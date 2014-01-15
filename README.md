@@ -1,6 +1,6 @@
 # Tiny2D
 
-An extremely easy to use, yet powerful, 2D game library
+An easy to use, yet powerful, 2D game library
 for mobile and desktop platforms.
 
 ## Features
@@ -16,14 +16,12 @@ Tiny2D provides C++ interface for the following functionality:
 
 - Textures (png, jpg and more)
 - Materials with Techniques and (GLSL) Shaders
-- Animates Sprites
-- Arbitrary Shape Rendering
+- Animated Sprites
 - Particle Effects
 - Render Targets
 - Several built-in Post-Processing Filters
 - Asynchronous Resource Loading
 - Virtual Resolution Rendering
-- Configurable Texture Sets
 - True Type Fonts
 - Audio (wav, ogg, mp3 and more)
 - Input (keyboard, mouse, touchpad)
