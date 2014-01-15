@@ -34,10 +34,11 @@ Tiny2D provides C++ interface for the following functionality:
 
 ## Links
 
-Website:
-http://tiny2d.pixelelephant.com
+Website: http://tiny2d.pixelelephant.com
+Getting Started: http://tiny2d.pixelelephant.com/getting_started.html
+Features: http://tiny2d.pixelelephant.com/features.html
 
-Doscussion Forum:
+Discussion Forum:
 http://tiny2d.lefora.com
 
 Developer Blog:
