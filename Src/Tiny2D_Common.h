@@ -1,6 +1,12 @@
 #ifndef TINY_2D_COMMON
 #define TINY_2D_COMMON
 
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <climits>
+#include <cstdarg>
+
 #include <vector>
 #include <map>
 #include <math.h>

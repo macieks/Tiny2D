@@ -1,8 +1,9 @@
+#include <cstdio>
 #include "Tiny2D.h"
 
-File* File_Open(const std::string& name, FileOpenMode openMode)
+File* File_Open(const std::string& name, int openMode)
 {
-	FILE* f = fopen(name.c_str(), openMode == FileOpenMode_Read ? "rb" : "wb");
+   FILE* f = fopen(name.c_str(), openMode == 0 ? "rb" : "wb");
 	return (File*) f;
 }
 

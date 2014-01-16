@@ -1,0 +1,45 @@
+#!/usr/bin/scons
+# -*- mode: python; -*-
+
+env = Environment()
+
+# Use the system's SDL2.
+# Comment this line if you want to instead use the bundled SDL2.
+env.ParseConfig("sdl2-config --cflags --libs")
+
+env.Append(CPPFLAGS=["-ggdb"])
+
+env.Append(CPPPATH=["#Include",
+                    "#Src",
+                    "#SDKs/ANGLE",
+#                    "#SDKs/SDL", # Uncomment if you prefer to use the bundled SDL2 library. (Untested)
+                    "#SDKs/OGGVorbis"])
+
+env.Append(LIBS=["GL",
+                 "SDL2_mixer",
+                 "SDL2_ttf",
+                 "SDL2_image"])
+
+target_lib = "#Lib/libTiny2D"
+
+# Get all the source files.
+ogl_src = Glob("#Src/OpenGL/*.cpp")
+sdl_src = Glob("#Src/SDL/*.cpp")
+
+src_files = Glob("#Src/*.cpp") + ogl_src + sdl_src
+src_files += ["#SDKs/OGGVorbis/stb_vorbis.cpp"]
+
+#############
+## Targets ##
+#############
+
+libTiny2D = env.SharedLibrary(target=target_lib,
+                              source=src_files)
+
+sample = env.Program(target="#Sample/sample",
+                     source=["#Sample/Tiny2D_Sample.cpp"],
+                     LIBPATH=["#Lib"],
+                     LIBS=["GL", "Tiny2D"])
+# The default.
+Default(libTiny2D)
+env.Alias("sample", sample)

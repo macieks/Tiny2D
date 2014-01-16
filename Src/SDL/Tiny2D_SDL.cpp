@@ -55,7 +55,10 @@ bool operator == (const App::DisplayMode& a, const App::DisplayMode& b)
 
 bool App_PreStartup()
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+  int flags = SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_TIMER
+    | SDL_INIT_EVENTS
+    | SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK;
+	if (SDL_Init(flags) < 0)
 	{
 		SDL_Log(string_format("SDL_Init failed, reason: %s", SDL_GetError()).c_str());
         return false;
