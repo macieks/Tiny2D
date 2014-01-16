@@ -1,6 +1,9 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
+namespace Tiny2D
+{
+
 Shape::VertexStream::VertexStream()
 {}
 
@@ -130,3 +133,5 @@ void Shape::DrawLines(const Vec2* xy, int count, const Color& color)
 
 	Shape::Draw(&params);
 }
+
+};

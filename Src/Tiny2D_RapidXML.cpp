@@ -1,6 +1,9 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
+namespace Tiny2D
+{
+
 #define RAPIDXML_NO_STDLIB
 #define RAPIDXML_NO_EXCEPTIONS
 
@@ -2865,3 +2868,5 @@ void XMLNode_GetAttributeValueInt(XMLNode* node, const char* name, int& result, 
 	if (!XMLNode_GetAttributeValueInt(node, name, result))
 		result = defaultValue;
 }
+
+};

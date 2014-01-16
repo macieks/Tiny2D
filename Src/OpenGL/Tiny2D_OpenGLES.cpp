@@ -1,6 +1,9 @@
 #include "Tiny2D.h"
 #include "Tiny2D_OpenGL.h"
 
+namespace Tiny2D
+{
+
 #ifdef CUSTOM_OPENGL_ES
 
 #include "SDL.h"
@@ -203,3 +206,5 @@ void OpenGLES_ConvertFromOpenGL(std::string& code)
 	string_replace_all(code, "float3", "vec3");
 	string_replace_all(code, "float4", "vec4");
 }
+
+};

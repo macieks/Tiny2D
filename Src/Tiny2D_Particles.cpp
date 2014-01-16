@@ -1,6 +1,9 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
+namespace Tiny2D
+{
+
 struct SpawnArea
 {
 	enum Type
@@ -957,3 +960,5 @@ EffectObj* Effect_Clone(EffectObj* other)
 
 	return effect;
 }
+
+};

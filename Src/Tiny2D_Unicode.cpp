@@ -22,6 +22,9 @@
  * remains attached.
  */
 
+namespace Tiny2D
+{
+
 /* Some fundamental constants */
 #define UNI_REPLACEMENT_CHAR (unsigned int) 0x0000FFFD
 #define UNI_MAX_BMP (unsigned int) 0x0000FFFF
@@ -155,3 +158,5 @@ bool UTF8ToUTF32(const unsigned char* src, unsigned int srcSize, unsigned int* d
 	dstSize = (unsigned int) (dst - dstStart);
     return true;
 }
+
+};

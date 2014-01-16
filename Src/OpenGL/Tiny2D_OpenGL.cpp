@@ -1,5 +1,8 @@
 #include "Tiny2D_OpenGL.h"
 
+namespace Tiny2D
+{
+
 extern GLuint g_fbo;
 
 float g_screenSizeMaterialParam[4];
@@ -49,7 +52,7 @@ void Shape_SetBlending(bool primitiveIsTranslucent, Shape::Blending blending)
 	}
 }
 
-void Texture_Draw(TextureObj* texture, float left, float top, float rotation, float scale, const Color& color)
+void Texture_Draw(TextureObj* texture, const Vec2& position, float rotation, float scale, const Color& color)
 {
 	float uv[8] =
 	{
@@ -61,6 +64,9 @@ void Texture_Draw(TextureObj* texture, float left, float top, float rotation, fl
 
 	const float scaledWidth = (float) texture->width * scale;
 	const float scaledHeight = (float) texture->height * scale;
+
+	float left = position.x;
+	float top = position.y;
 
 	left -= (scaledWidth - (float) texture->width) * 0.5f;
 	top -= (scaledHeight - (float) texture->height) * 0.5f;
@@ -475,3 +481,5 @@ void CheckOpenGLErrors(const char* operation, const char* file, unsigned int lin
 
 	Log::Error(string_format("OpenGL error: %s (%u)\nOPERATION: %s\nFILE: %s\nLINE: %u\n", errorAsString, (unsigned int) error, operation, file, line));
 }
+
+};

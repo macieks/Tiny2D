@@ -1,6 +1,8 @@
 #include "Tiny2D.h"
 #include <math.h>
 
+using namespace Tiny2D;
+
 class SampleApp : public App::Callbacks
 {
 public:
@@ -249,7 +251,7 @@ private:
 		const float scale = radius * 2.0f / (float) cogWheel.GetWidth();
 		x -= 400.0f;
 		y += 100.0f;
-		cogWheel.Draw(x, y, rotation, scale, color);
+		cogWheel.Draw(Vec2(x, y), rotation, scale, color);
 	}
 
 	void DrawLoadingScreen(Texture& renderTarget)
@@ -320,7 +322,7 @@ private:
 
 		// Draw content of the render texture
 
-		renderTexture.Draw(100, 100, -moonPosition.x * 0.01f);
+		renderTexture.Draw(Vec2(100, 100), -moonPosition.x * 0.01f);
 
 		// Walking character
 		{

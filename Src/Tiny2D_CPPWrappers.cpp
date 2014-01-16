@@ -1,6 +1,8 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
+using namespace Tiny2D;
+
 Texture::Texture() : obj(NULL) {}
 Texture::Texture(const Texture& other) : obj(NULL) { *this = other; }
 Texture::~Texture() { Destroy(); }
@@ -21,7 +23,7 @@ void Texture::Destroy() { if (obj) { Texture_Destroy(obj); obj = NULL; } }
 bool Texture::Save(const std::string& path, bool saveAlpha) { return obj && Texture_Save(obj, path, saveAlpha); }
 bool Texture::IsValid() const { return obj != NULL; }
 void Texture::Draw(const Shape::DrawParams* params, const Sampler& sampler) { if (obj) Texture_Draw(obj, params, sampler); }
-void Texture::Draw(float left, float top, float rotation, float scale, const Color& color) { if (obj) Texture_Draw(obj, left, top, rotation, scale, color); }
+void Texture::Draw(const Vec2& position, float rotation, float scale, const Color& color) { if (obj) Texture_Draw(obj, position, rotation, scale, color); }
 int Texture::GetWidth() { return obj ? Texture_GetWidth(obj) : 0; }
 int	Texture::GetHeight() { return obj ? Texture_GetHeight(obj) : 0; }
 int Texture::GetRealWidth() { return obj ? Texture_GetRealWidth(obj) : 0; }

@@ -10,11 +10,17 @@
 		#pragma comment(lib, "libEGL.lib")
 		#pragma comment(lib, "libGLESv2.lib")
 		struct SDL_Window;
-		bool OpenGLES_CreateContext(SDL_Window* window, App::StartupParams* params);
-		void OpenGLES_DestroyContext();
-		void OpenGLES_SwapWindow();
+		namespace Tiny2D
+		{
+			bool OpenGLES_CreateContext(SDL_Window* window, App::StartupParams* params);
+			void OpenGLES_DestroyContext();
+			void OpenGLES_SwapWindow();
+		};
 	#endif
-	void OpenGLES_ConvertFromOpenGL(std::string& code);
+	namespace Tiny2D
+	{
+		void OpenGLES_ConvertFromOpenGL(std::string& code);
+	};
 	#include "SDL_opengles2.h"
 
 	#define glActiveTextureARB glActiveTexture
@@ -84,6 +90,9 @@
 	#define glDisableTexture2D()
 #endif
 
+namespace Tiny2D
+{
+
 #ifdef DEBUG
 	void CheckOpenGLErrors(const char* operation, const char* file, unsigned int line);
 
@@ -101,199 +110,200 @@
 	#define GLR(call) call
 #endif
 
-struct TextureObj : Resource
-{
-	GLuint handle;
-	GLenum format;
-	GLint internalFormat;
-	bool hasAlpha;
-	int width;
-	int height;
-	bool isRenderTarget;
-	bool isLoaded;
-	float sizeScale;
-
-	TextureObj() :
-		Resource("texture"),
-		handle(0),
-		format(0),
-		internalFormat(0),
-		width(0),
-		height(0),
-		isRenderTarget(false),
-		isLoaded(false),
-		sizeScale(1.0f)
-	{}
-};
-
-struct Shader : Resource
-{
-	enum Type
+	struct TextureObj : Resource
 	{
-		Type_Vertex = 0,
-		Type_Fragment,
+		GLuint handle;
+		GLenum format;
+		GLint internalFormat;
+		bool hasAlpha;
+		int width;
+		int height;
+		bool isRenderTarget;
+		bool isLoaded;
+		float sizeScale;
 
-		Type_COUNT
+		TextureObj() :
+			Resource("texture"),
+			handle(0),
+			format(0),
+			internalFormat(0),
+			width(0),
+			height(0),
+			isRenderTarget(false),
+			isLoaded(false),
+			sizeScale(1.0f)
+		{}
 	};
 
-	Type type;
-	GLuint handle;
-
-	std::string sourceCode;
-
-	Shader() : Resource("shader") {}
-};
-
-void Shader_Destroy(Shader* shader);
-
-class ShaderPtr
-{
-public:
-	ShaderPtr(Shader* shader = NULL) { this->shader = shader; }
-	~ShaderPtr() { if (shader) Shader_Destroy(shader); }
-	inline void operator == (Shader* shader) { if (shader) Shader_Destroy(shader); this->shader = shader; }
-	inline Shader* operator -> () const { return shader; }
-	inline Shader* operator * () const { return shader; }
-private:
-	Shader* shader;
-};
-
-struct ShaderAttribute
-{
-	Shape::VertexUsage usage;
-	GLint usageIndex;
-	GLint location;
-};
-
-struct ShaderParameterDescription
-{
-	enum Type
+	struct Shader : Resource
 	{
-		Type_Int = 0,
-		Type_Float,
-		Type_Texture,
+		enum Type
+		{
+			Type_Vertex = 0,
+			Type_Fragment,
 
-		Type_COUNT
+			Type_COUNT
+		};
+
+		Type type;
+		GLuint handle;
+
+		std::string sourceCode;
+
+		Shader() : Resource("shader") {}
 	};
 
-	std::string name;
-	Type type;
-	GLint count;
+	void Shader_Destroy(Shader* shader);
 
-	inline bool operator != (const ShaderParameterDescription& other) const
+	class ShaderPtr
 	{
-		return
-			name != other.name ||
-			type != other.type ||
-			count != other.count;
-	}
-};
-
-struct ShaderParameter : ShaderParameterDescription
-{
-	GLint location;
-};
-
-struct ShaderProgram : Resource
-{
-	GLuint handle;
-
-	Shader* vs;
-	Shader* fs;
-
-	std::vector<ShaderAttribute> attributes;
-	std::vector<ShaderParameter> parameters;
-
-	ShaderProgram() : Resource("shader program") {}
-};
-
-struct MaterialParameter
-{
-	ShaderParameterDescription* shaderParameterDescription;
-
-	union
-	{
-		int intValue[4];
-		float floatValue[4];
-		TextureObj* textureValue;
+	public:
+		ShaderPtr(Shader* shader = NULL) { this->shader = shader; }
+		~ShaderPtr() { if (shader) Shader_Destroy(shader); }
+		inline void operator == (Shader* shader) { if (shader) Shader_Destroy(shader); this->shader = shader; }
+		inline Shader* operator -> () const { return shader; }
+		inline Shader* operator * () const { return shader; }
+	private:
+		Shader* shader;
 	};
-	Sampler sampler;
 
-	MaterialParameter() :
-		shaderParameterDescription(NULL)
+	struct ShaderAttribute
 	{
-		textureValue = NULL;
+		Shape::VertexUsage usage;
+		GLint usageIndex;
+		GLint location;
+	};
+
+	struct ShaderParameterDescription
+	{
+		enum Type
+		{
+			Type_Int = 0,
+			Type_Float,
+			Type_Texture,
+
+			Type_COUNT
+		};
+
+		std::string name;
+		Type type;
+		GLint count;
+
+		inline bool operator != (const ShaderParameterDescription& other) const
+		{
+			return
+				name != other.name ||
+				type != other.type ||
+				count != other.count;
+		}
+	};
+
+	struct ShaderParameter : ShaderParameterDescription
+	{
+		GLint location;
+	};
+
+	struct ShaderProgram : Resource
+	{
+		GLuint handle;
+
+		Shader* vs;
+		Shader* fs;
+
+		std::vector<ShaderAttribute> attributes;
+		std::vector<ShaderParameter> parameters;
+
+		ShaderProgram() : Resource("shader program") {}
+	};
+
+	struct MaterialParameter
+	{
+		ShaderParameterDescription* shaderParameterDescription;
+
+		union
+		{
+			int intValue[4];
+			float floatValue[4];
+			TextureObj* textureValue;
+		};
+		Sampler sampler;
+
+		MaterialParameter() :
+			shaderParameterDescription(NULL)
+		{
+			textureValue = NULL;
+		}
+	};
+
+	struct MaterialBase
+	{
+		std::vector<MaterialParameter> parameters;
+	};
+
+	struct MaterialTechnique
+	{
+		std::string name;
+		ShaderProgram* shaderProgram;
+		std::vector<int> materialParameterIndices;
+		Shape::Blending blending;
+
+		MaterialTechnique() :
+			shaderProgram(NULL),
+			blending(Shape::Blending_Default)
+		{}
+	};
+
+	struct MaterialResource : Resource, MaterialBase
+	{
+		std::vector<MaterialTechnique> techniques;
+
+		MaterialResource() : Resource("material") {}
+	};
+
+	struct MaterialObj : MaterialBase
+	{
+		MaterialTechnique* currentTechnique;
+		MaterialResource* resource;
+		int screenSizeParamIndex;
+		int projectionScaleParamIndex;
+
+		MaterialObj() :
+			currentTechnique(NULL),
+			resource(NULL),
+			screenSizeParamIndex(-1),
+			projectionScaleParamIndex(-1)
+		{}
+	};
+
+	inline GLint Sampler_WrapMode_ToOpenGL(Sampler::WrapMode mode)
+	{
+		switch (mode)
+		{
+			case Sampler::WrapMode_Clamp: return GL_CLAMP_TO_EDGE;
+			case Sampler::WrapMode_ClampToBorder:
+	#ifdef OPENGL_ES
+				return GL_CLAMP_TO_EDGE;
+	#else
+				return GL_CLAMP_TO_BORDER;
+	#endif
+			case Sampler::WrapMode_Repeat: return GL_REPEAT;
+			case Sampler::WrapMode_Mirror: return GL_MIRRORED_REPEAT;
+		}
+		return GL_CLAMP_TO_EDGE;
+	}
+
+	inline GLenum Shape_Geometry_Type_ToOpenGL(Shape::Geometry::Type type)
+	{
+		switch (type)
+		{
+			case Shape::Geometry::Type_TriangleFan: return GL_TRIANGLE_FAN;
+			case Shape::Geometry::Type_Triangles: return GL_TRIANGLES;
+			case Shape::Geometry::Type_Lines: return GL_LINES;
+		}
+
+		Assert(!"Unsupported primitive type");
+		return GL_TRIANGLE_FAN;
 	}
 };
-
-struct MaterialBase
-{
-	std::vector<MaterialParameter> parameters;
-};
-
-struct MaterialTechnique
-{
-	std::string name;
-	ShaderProgram* shaderProgram;
-	std::vector<int> materialParameterIndices;
-	Shape::Blending blending;
-
-	MaterialTechnique() :
-		shaderProgram(NULL),
-		blending(Shape::Blending_Default)
-	{}
-};
-
-struct MaterialResource : Resource, MaterialBase
-{
-	std::vector<MaterialTechnique> techniques;
-
-	MaterialResource() : Resource("material") {}
-};
-
-struct MaterialObj : MaterialBase
-{
-	MaterialTechnique* currentTechnique;
-	MaterialResource* resource;
-	int screenSizeParamIndex;
-	int projectionScaleParamIndex;
-
-	MaterialObj() :
-		currentTechnique(NULL),
-		resource(NULL),
-		screenSizeParamIndex(-1),
-		projectionScaleParamIndex(-1)
-	{}
-};
-
-inline GLint Sampler_WrapMode_ToOpenGL(Sampler::WrapMode mode)
-{
-	switch (mode)
-	{
-		case Sampler::WrapMode_Clamp: return GL_CLAMP_TO_EDGE;
-		case Sampler::WrapMode_ClampToBorder:
-#ifdef OPENGL_ES
-			return GL_CLAMP_TO_EDGE;
-#else
-			return GL_CLAMP_TO_BORDER;
-#endif
-		case Sampler::WrapMode_Repeat: return GL_REPEAT;
-		case Sampler::WrapMode_Mirror: return GL_MIRRORED_REPEAT;
-	}
-	return GL_CLAMP_TO_EDGE;
-}
-
-inline GLenum Shape_Geometry_Type_ToOpenGL(Shape::Geometry::Type type)
-{
-	switch (type)
-	{
-		case Shape::Geometry::Type_TriangleFan: return GL_TRIANGLE_FAN;
-		case Shape::Geometry::Type_Triangles: return GL_TRIANGLES;
-		case Shape::Geometry::Type_Lines: return GL_LINES;
-	}
-
-	Assert(!"Unsupported primitive type");
-	return GL_TRIANGLE_FAN;
-}
 
 #endif // TINY_2D_OPENGL

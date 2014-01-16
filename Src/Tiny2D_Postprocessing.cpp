@@ -1,6 +1,9 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
+namespace Tiny2D
+{
+
 // Bloom
 
 struct Bloom
@@ -561,3 +564,5 @@ void Postprocessing_DrawRainyGlass(Texture& renderTarget, Texture& scene)
 
 	renderTarget.EndDrawing();
 }
+
+};

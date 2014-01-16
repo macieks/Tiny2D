@@ -1,5 +1,8 @@
 #include "Tiny2D_OpenGL.h"
 
+namespace Tiny2D
+{
+
 int g_maxTextureUnitSet = -1;
 
 // Shader
@@ -896,3 +899,5 @@ void Material_SetTechnique(MaterialObj* material, int index)
 	}
 	material->currentTechnique = &material->resource->techniques[index];
 }
+
+};

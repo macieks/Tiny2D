@@ -15,6 +15,17 @@
 	#undef GL_PROC
 #endif
 
+void App_InitGLProcedures()
+{
+#ifndef OPENGL_ES
+	#define GL_PROC(type, func) func = (type) SDL_GL_GetProcAddress(#func);
+	#include "../OpenGL/Tiny2D_OpenGLProcedures.h"
+	#undef GL_PROC
+#endif
+}
+namespace Tiny2D
+{
+
 SDL_Window* g_window = NULL;
 bool g_windowHasFocus = false;
 bool g_mouseHasFocus = false;
@@ -38,15 +49,6 @@ void Sound_OnMusicFinished();
 
 void Jobs_Init();
 void Jobs_Deinit();
-
-void App_InitGLProcedures()
-{
-#ifndef OPENGL_ES
-	#define GL_PROC(type, func) func = (type) SDL_GL_GetProcAddress(#func);
-	#include "../OpenGL/Tiny2D_OpenGLProcedures.h"
-	#undef GL_PROC
-#endif
-}
 
 bool operator == (const App::DisplayMode& a, const App::DisplayMode& b)
 {
@@ -1819,12 +1821,14 @@ SDL_RWops* File_OpenSDLFileRW(const std::string& name, File::OpenMode openMode)
 	return NULL;
 }
 
+};
+
 // Main
 
 int main(int argc, char** argv)
 {
-	if (!App_PreStartup())
+	if (!Tiny2D::App_PreStartup())
 		return -1;
 
-	return App_Main(argc, argv);
+	return Tiny2D::App_Main(argc, argv);
 }

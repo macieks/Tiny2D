@@ -1,6 +1,8 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
+using namespace Tiny2D;
+
 std::map<std::string, std::string> g_strings;
 
 Localization::Param::Param() :

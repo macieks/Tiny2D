@@ -1,7 +1,16 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
-App::Callbacks* (*g_createAppCallbacksFunc)() = NULL;
+Tiny2D::App::Callbacks* (*g_createAppCallbacksFunc)() = NULL;
+
+void SetCreateTiny2DAppCallbacks(Tiny2D::App::Callbacks* (*func)())
+{
+	g_createAppCallbacksFunc = func;
+}
+
+namespace Tiny2D
+{
+
 App::Callbacks* g_app = NULL;
 App::SystemInfo g_systemInfo;
 
@@ -90,6 +99,11 @@ Sampler Sampler::DefaultPostprocess;
 
 // Random
 
+void Random::Seed(int seed)
+{
+	srand((unsigned int) seed);
+}
+
 int Random::GetInt(int minValue, int maxValue)
 {
 #ifdef DEBUG
@@ -175,11 +189,6 @@ App::StartupParams::StartupParams() :
 	showMessageBoxOnError = true;
 	exitOnError = true;
 #endif
-}
-
-void SetCreateAppCallbacks(App::Callbacks* (*func)())
-{
-	g_createAppCallbacksFunc = func;
 }
 
 const std::vector<std::string>& App::GetRootDataDirs()
@@ -970,3 +979,5 @@ void Pixels_RGBA_To_RGB(std::vector<unsigned char>& pixels)
 
 	pixels.resize( pixels.size() / 4 * 3 );
 }
+
+};

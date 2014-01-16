@@ -1,6 +1,9 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
+namespace Tiny2D
+{
+
 Sprite::DrawParams::DrawParams() :
 	color(Color::White),
 	position(10, 10),
@@ -483,3 +486,5 @@ int Sprite_GetHeight(SpriteObj* sprite)
 		return 0;
 	return sprite->resource->height;
 }
+
+};

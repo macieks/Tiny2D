@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+using namespace Tiny2D;
+
 bool RectPacker::SolveFixedRect(unsigned int space, unsigned int numLayers, std::vector<Rect>& rects, unsigned int width, unsigned int height)
 {
 	// Initialize set of free rectangles
