@@ -382,9 +382,9 @@ struct EmitterResource
 	Texture colorMap;
 
 	EmitterResource() :
-		localSimulation(true),
 		maxParticles(16),
-		blending(Shape::Blending_Default)
+		blending(Shape::Blending_Default),
+		localSimulation(true)
 	{
 		initial.spawnArea.type = SpawnArea::Type_Point;
 		initial.spawnCount = 0.0f;
@@ -503,7 +503,7 @@ void Emitter_SpawnParticles(EffectObj* effect, Emitter* emitter, EmitterResource
 		{
 			numParticlesToSpawn -= 1.0f;
 
-			if (emitter->particles.size() == resource->maxParticles)
+			if ((int) emitter->particles.size() == resource->maxParticles)
 				continue;
 
 			Particle& particle = vector_add(emitter->particles);
@@ -520,6 +520,8 @@ void Emitter_SpawnParticles(EffectObj* effect, Emitter* emitter, EmitterResource
 
 			switch (spawnArea.type)
 			{
+			    case SpawnArea::Type_Point:
+			        break;
 				case SpawnArea::Type_Circle:
 				{
 					float distanceFromCenter = Random::GetFloat(0, spawnArea.circle.radius * 2.0f);
@@ -570,8 +572,6 @@ void Emitter_Update(EffectObj* effect, Emitter* emitter, EmitterResource* resour
 	}
 
 	// Update emitter
-
-	const float emitterLifeLengthBefore = emitter->lifeLength;
 
 	if (!emitter->toDelete)
 	{
@@ -660,7 +660,7 @@ void Emitter_Update(EffectObj* effect, Emitter* emitter, EmitterResource* resour
 				acceleration *= effect->transform.scale;
 				acceleration.Rotate(effect->transform.rotation);
 			}
-			
+
 			it->velocity += acceleration * deltaTime;
 		}
 		it->pos += it->velocity * deltaTime;

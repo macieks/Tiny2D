@@ -121,9 +121,6 @@ bool App::ModifyDisplaySettings(const App::DisplaySettings& settings)
 
 	// Determine width and height of the window to create
 
-	int left = 50;
-	int top = 50;
-
 	int width = settings.width;
 	int height = settings.height;
 	if (!width || !height)
@@ -271,13 +268,13 @@ bool App_Startup(App::StartupParams* params)
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,       8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,      8);
     SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,     32);
- 
+
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,      24);
- 
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,	1);
 
 #if defined(OPENGL_ES) && !defined(CUSTOM_OPENGL_ES)
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES); 
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #endif
@@ -298,6 +295,7 @@ bool App_Startup(App::StartupParams* params)
 	Log::Info(string_format("OpenGL Shading Language Version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION)));
 
 	const char* extensions = (const char*) glGetString(GL_EXTENSIONS);
+	(void) extensions;
 
 	App_InitGLProcedures();
 
@@ -1216,7 +1214,7 @@ SoundObj* Sound_Create(const std::string& name, bool isMusic, bool immediate)
 			SoundResourceJobData* jobData = new SoundResourceJobData();
 			jobData->resource = resource;
 			jobData->isMusic = isMusic;
-			
+
 			resource->jobID = Jobs::RunJob(SoundResource_JobFunc, SoundResource_DoneFunc, jobData);
 		}
 	}
@@ -1571,6 +1569,7 @@ void Font_CalculateSize(FontObj* font, const Text::DrawParams* params, float& wi
 {
 	int widthInt, heightInt;
 	const int result = TTF_SizeUTF8(font->font, params->text.c_str(), &widthInt, &heightInt);
+	(void) result;
 	width = (float) widthInt;
 	height = (float) heightInt;
 }

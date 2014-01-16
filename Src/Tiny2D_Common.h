@@ -8,6 +8,15 @@
 	#include <shlwapi.h>
 #endif
 
+#ifndef _MSC_VER
+    #include <stdlib.h>
+    #include <stdio.h>
+	#ifndef INT_MAX
+		#define INT_MAX         2147483647
+		#define INT_MIN         (-2147483647 - 1)
+	#endif
+#endif
+
 #define PI 3.141592654f
 #ifndef ARRAYSIZE
 	#define ARRAYSIZE(a) (sizeof(a) / sizeof((a)[0]))

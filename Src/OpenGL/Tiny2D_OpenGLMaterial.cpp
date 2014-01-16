@@ -119,7 +119,7 @@ Shader* Shader_Create(const std::string& path, Shader::Type type, const std::str
 	{
 		std::string sourceCode;
 		if (!Shader_LoadShaderCode(path, entry, sourceCode))
-			return false;
+			return NULL;
 #ifdef OPENGL_ES
 		OpenGLES_ConvertFromOpenGL(sourceCode);
 #endif
@@ -128,7 +128,7 @@ Shader* Shader_Create(const std::string& path, Shader::Type type, const std::str
 		if (!handle)
 		{
 			Log::Error("glCreateShaderObject returned invalid handle");
-			return false;
+			return NULL;
 		}
 
 		const char* sourceCodeChars = sourceCode.c_str();
@@ -190,7 +190,7 @@ ShaderProgram* ShaderProgram_Create(const std::string& vertexShader, const std::
 		ShaderPtr vs = Shader_Create(vertexShader, Shader::Type_Vertex, vertexShaderEntry);
 		ShaderPtr fs = Shader_Create(fragmentShader, Shader::Type_Fragment, fragmentShaderEntry);
 		if (!*vs || !*fs)
-			return false;
+			return NULL;
 
 		// Build program
 
@@ -198,7 +198,7 @@ ShaderProgram* ShaderProgram_Create(const std::string& vertexShader, const std::
 		if (!handle)
 		{
 			Log::Error("glCreateProgramObject returned invalid handle");
-			return false;
+			return NULL;
 		}
 
 		GL(glAttachObjectARB(handle, vs->handle));
@@ -207,7 +207,7 @@ ShaderProgram* ShaderProgram_Create(const std::string& vertexShader, const std::
 		// Link program
 
 		GL(glLinkProgramARB(handle));
-	
+
 		GLint linkResult;
 		GL(glGetProgramiv(handle, GL_OBJECT_LINK_STATUS_ARB, &linkResult));
 		if (!linkResult)

@@ -4,9 +4,9 @@
 Sprite::DrawParams::DrawParams() :
 	color(Color::White),
 	position(10, 10),
-	scale(1),
 	rect(NULL),
 	texCoordRect(NULL),
+	scale(1),
 	rotation(0),
 	flipX(false),
 	flipY(false)
@@ -65,14 +65,14 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 		if (!doc.Load(path))
 		{
 			Log::Error("Failed to load sprite resource from " + path);
-			return false;
+			return NULL;
 		}
 
 		XMLNode* spriteNode = doc.AsNode()->GetFirstNode("sprite");
 		if (!spriteNode)
 		{
 			Log::Error("Failed to load sprite resource from " + path + ", reason: root node 'sprite' not found.");
-			return false;
+			return NULL;
 		}
 
 		MaterialObj* material = NULL;
@@ -83,7 +83,7 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 			if (!material)
 			{
 				Log::Error("Failed to load sprite resource from " + path + ", reason: can't load material " + materialName);
-				return false;
+				return NULL;
 			}
 		}
 
@@ -236,7 +236,7 @@ void Sprite_Update(SpriteObj* sprite, float dt)
 			instWhenDone = &(*it);
 		else
 			it->time += dt;
-		
+
 		if (it->time >= it->animation->totalTime)
 		{
 			switch (it->mode)

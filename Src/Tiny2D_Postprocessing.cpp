@@ -19,9 +19,6 @@ void Postprocessing::EnableBloom(bool enable, float blendFactor, float blurKerne
 	{
 		bloom = new Bloom();
 
-		const int w = App::GetWidth();
-		const int h = App::GetHeight();
-
 		bloom->material.Create("common/postprocessing");
 
 		bloom->blendFactor = blendFactor;

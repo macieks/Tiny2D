@@ -61,7 +61,7 @@ std::string string_format(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	
+
 	char buffer[1 << 16];
 #if defined(UE_WIN32) || defined(UE_X360)
 	_vsnprintf_s(buffer, ARRAYSIZE(buffer), ARRAYSIZE(buffer), format, args);
@@ -152,11 +152,11 @@ void App::DisplaySettings::SetiPadRetinaResolution()
 
 App::StartupParams::StartupParams() :
 	name("Tiny2D App"),
+	languageSymbol("EN"),
 	defaultMaterialName("common/default"),
 	defaultFontName("common/courbd.ttf"),
-	defaultCursorName("common/cursor.png"),
 	defaultFontSize(16),
-	languageSymbol("EN"),
+	defaultCursorName("common/cursor.png"),
 	showMessageBoxOnWarning(false),
 	showMessageBoxOnError(false),
 	exitOnError(false),
@@ -214,7 +214,7 @@ void App_DrawCursor()
 	if (g_emulateTouchpadWithMouse)
 	{
 		const Input::MouseState& mouseState = Input::GetMouseState();
-		
+
 		Rect rect;
 		rect.Set(
 			(mouseState.position.x - (float) g_cursorSprite.GetWidth() / 2),
@@ -374,7 +374,7 @@ int App_MainRun(int argc, char** argv)
 	}
 
 	// Startup system
-	
+
 	App::StartupParams params;
 	if (!g_app->OnStartup(argc - 1, (const char**) (argv + 1), g_systemInfo, params))
 		return 2;

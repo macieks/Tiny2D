@@ -8,112 +8,112 @@
 
 #include "EGL/egl.h"
 
-EGLBoolean CreateEGLContext(EGLNativeWindowType hWnd, EGLDisplay* eglDisplay, 
-							EGLContext* eglContext, EGLSurface* eglSurface, 
-							EGLint* configAttribList, EGLint* surfaceAttribList) 
-{ 
-	EGLint numConfigs; 
-	EGLint majorVersion; 
-	EGLint minorVersion; 
-	EGLDisplay display; 
-	EGLContext context; 
-	EGLSurface surface; 
-	EGLConfig config; 
+EGLBoolean CreateEGLContext(EGLNativeWindowType hWnd, EGLDisplay* eglDisplay,
+							EGLContext* eglContext, EGLSurface* eglSurface,
+							EGLint* configAttribList, EGLint* surfaceAttribList)
+{
+	EGLint numConfigs;
+	EGLint majorVersion;
+	EGLint minorVersion;
+	EGLDisplay display;
+	EGLContext context;
+	EGLSurface surface;
+	EGLConfig config;
 	EGLint contextAttribs[] =
 	{
 		EGL_CONTEXT_CLIENT_VERSION, 2,
 		EGL_NONE, EGL_NONE
 	};
-    
-	// Get display 
-	display = eglGetDisplay(GetDC(hWnd)); // EGL_DEFAULT_DISPLAY 
+
+	// Get display
+	display = eglGetDisplay(GetDC(hWnd)); // EGL_DEFAULT_DISPLAY
 	if (display == EGL_NO_DISPLAY)
-		return EGL_FALSE; 
+		return EGL_FALSE;
 
-	// Initialize EGL 
+	// Initialize EGL
 	if (!eglInitialize(display, &majorVersion, &minorVersion))
-		return EGL_FALSE; 
+		return EGL_FALSE;
 
-	// Get configs 
+	// Get configs
 	if (!eglGetConfigs(display, NULL, 0, &numConfigs))
-		return EGL_FALSE; 
+		return EGL_FALSE;
 
-	// Choose config 
+	// Choose config
 	if (!eglChooseConfig(display, configAttribList, &config, 1, &numConfigs))
-		return EGL_FALSE; 
+		return EGL_FALSE;
 
-	// Create a surface 
+	// Create a surface
 	surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)hWnd, surfaceAttribList);
 	if (surface == EGL_NO_SURFACE)
-		return EGL_FALSE; 
+		return EGL_FALSE;
 
 	// Bind the API
 	eglBindAPI(EGL_OPENGL_ES_API);
 
-	// Create a GL context 
+	// Create a GL context
 	context = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
 	if (context == EGL_NO_CONTEXT)
 		return EGL_FALSE;
 
-	// Make the context current 
+	// Make the context current
 	if (!eglMakeCurrent(display, surface, surface, context))
-		return EGL_FALSE; 
+		return EGL_FALSE;
 
-	*eglDisplay = display; 
-	*eglSurface = surface; 
-	*eglContext = context; 
-	return EGL_TRUE; 
-} 
+	*eglDisplay = display;
+	*eglSurface = surface;
+	*eglContext = context;
+	return EGL_TRUE;
+}
 
 struct ESContext
-{ 
-   GLint       width; 
-   GLint       height; 
-   EGLNativeWindowType  hWnd; 
-   EGLDisplay  eglDisplay; 
-   EGLContext  eglContext; 
-   EGLSurface  eglSurface; 
+{
+   GLint       width;
+   GLint       height;
+   EGLNativeWindowType  hWnd;
+   EGLDisplay  eglDisplay;
+   EGLContext  eglContext;
+   EGLSurface  eglSurface;
 };
 
-static ESContext es_context; 
+static ESContext es_context;
 
 bool OpenGLES_CreateContext(SDL_Window* window, App::StartupParams* params)
 {
-   SDL_SysWMinfo info; 
-   SDL_VERSION(&info.version); // initialize info structure with SDL version info 
-   SDL_bool get_win_info = SDL_GetWindowWMInfo(window, &info); 
-   Assert(get_win_info); 
-   EGLNativeWindowType hWnd = info.info.win.window; 
+   SDL_SysWMinfo info;
+   SDL_VERSION(&info.version); // initialize info structure with SDL version info
+   SDL_bool get_win_info = SDL_GetWindowWMInfo(window, &info);
+   Assert(get_win_info);
+   EGLNativeWindowType hWnd = info.info.win.window;
 
-   es_context.width = params->width; 
-   es_context.height = params->height; 
+   es_context.width = params->width;
+   es_context.height = params->height;
    es_context.hWnd = hWnd;
 
-   EGLint configAttribList[] = 
-   { 
-      EGL_RED_SIZE,       8, 
-      EGL_GREEN_SIZE,     8, 
-      EGL_BLUE_SIZE,      8, 
-      EGL_ALPHA_SIZE,     8 /*: EGL_DONT_CARE*/, 
-      EGL_DEPTH_SIZE,     24, 
-      EGL_STENCIL_SIZE,   8, 
-      EGL_SAMPLE_BUFFERS, 0, 
-      EGL_NONE 
-   }; 
-   EGLint surfaceAttribList[] = 
-   { 
-      //EGL_POST_SUB_BUFFER_SUPPORTED_NV, flags & (ES_WINDOW_POST_SUB_BUFFER_SUPPORTED) ? EGL_TRUE : EGL_FALSE, 
-      //EGL_POST_SUB_BUFFER_SUPPORTED_NV, EGL_FALSE, 
-      EGL_NONE, EGL_NONE 
-   }; 
+   EGLint configAttribList[] =
+   {
+      EGL_RED_SIZE,       8,
+      EGL_GREEN_SIZE,     8,
+      EGL_BLUE_SIZE,      8,
+      EGL_ALPHA_SIZE,     8 /*: EGL_DONT_CARE*/,
+      EGL_DEPTH_SIZE,     24,
+      EGL_STENCIL_SIZE,   8,
+      EGL_SAMPLE_BUFFERS, 0,
+      EGL_NONE
+   };
+   EGLint surfaceAttribList[] =
+   {
+      //EGL_POST_SUB_BUFFER_SUPPORTED_NV, flags & (ES_WINDOW_POST_SUB_BUFFER_SUPPORTED) ? EGL_TRUE : EGL_FALSE,
+      //EGL_POST_SUB_BUFFER_SUPPORTED_NV, EGL_FALSE,
+      EGL_NONE, EGL_NONE
+   };
 
-   if (!CreateEGLContext(es_context.hWnd, 
-         &es_context.eglDisplay, 
-         &es_context.eglContext, 
-         &es_context.eglSurface, 
-         configAttribList, 
-         surfaceAttribList)) 
-   { 
+   if (!CreateEGLContext(es_context.hWnd,
+         &es_context.eglDisplay,
+         &es_context.eglContext,
+         &es_context.eglSurface,
+         configAttribList,
+         surfaceAttribList))
+   {
       Log::Error("Failed to create OpenGL ES 2.0 context");
 	  return false;
    }
@@ -121,32 +121,32 @@ bool OpenGLES_CreateContext(SDL_Window* window, App::StartupParams* params)
    const char* extensions = (const char*) glGetString(GL_EXTENSIONS);
 
    return true;
-} 
+}
 
 void OpenGLES_DestroyContext()
-{ 
-  if (EGL_NO_CONTEXT != es_context.eglContext) 
-  { 
-     eglDestroyContext(es_context.eglDisplay, es_context.eglContext); 
-     es_context.eglContext = EGL_NO_CONTEXT; 
-  } 
+{
+  if (EGL_NO_CONTEXT != es_context.eglContext)
+  {
+     eglDestroyContext(es_context.eglDisplay, es_context.eglContext);
+     es_context.eglContext = EGL_NO_CONTEXT;
+  }
 
-  if (EGL_NO_SURFACE != es_context.eglSurface) 
-  { 
-     eglDestroySurface(es_context.eglDisplay, es_context.eglSurface); 
-     es_context.eglSurface = EGL_NO_SURFACE; 
-  } 
+  if (EGL_NO_SURFACE != es_context.eglSurface)
+  {
+     eglDestroySurface(es_context.eglDisplay, es_context.eglSurface);
+     es_context.eglSurface = EGL_NO_SURFACE;
+  }
 
-  if (EGL_NO_DISPLAY != es_context.eglDisplay) 
-  { 
-     eglTerminate(es_context.eglDisplay); 
-     es_context.eglDisplay = EGL_NO_DISPLAY; 
-  } 
+  if (EGL_NO_DISPLAY != es_context.eglDisplay)
+  {
+     eglTerminate(es_context.eglDisplay);
+     es_context.eglDisplay = EGL_NO_DISPLAY;
+  }
 }
 
 void OpenGLES_SwapWindow()
-{ 
-   eglSwapBuffers( es_context.eglDisplay, es_context.eglSurface ); 
+{
+   eglSwapBuffers( es_context.eglDisplay, es_context.eglSurface );
 }
 
 #endif
@@ -183,7 +183,7 @@ void OpenGLES_ConvertFromOpenGL(std::string& code)
 	if (const char* eofAfterVersion = get_eof_after(code, "#version"))
 		code = eofAfterVersion;
 
-	for (int i = 0; i < ARRAYSIZE(attributes); i++)
+	for (int i = 0; i < (int) ARRAYSIZE(attributes); i++)
 		if (strstr(code.c_str(), attributes[i]))
 		{
 			insert_after_pragmas(code, string_format("attribute vec4 %s;\r\n", attributes[i]));
