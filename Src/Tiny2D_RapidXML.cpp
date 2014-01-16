@@ -545,7 +545,8 @@ namespace rapidxml
         
         char *align(char *ptr)
         {
-            int alignment = ((RAPIDXML_ALIGNMENT - (int(ptr) & (RAPIDXML_ALIGNMENT - 1))) & (RAPIDXML_ALIGNMENT - 1));
+            unsigned long ip = (unsigned long)( (void*) ptr);
+            int alignment = ((RAPIDXML_ALIGNMENT - (ip & (RAPIDXML_ALIGNMENT - 1))) & (RAPIDXML_ALIGNMENT - 1));
             return ptr + alignment;
         }
         
