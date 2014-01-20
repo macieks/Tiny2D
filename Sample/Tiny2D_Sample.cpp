@@ -273,7 +273,7 @@ private:
 		DrawCogWheel(990, 957 - 750, 22, cogWheelRotation * 3.4f, Color(0.5f, 0.3f, 0.1f, 1));
 
 		// End drawing to render target
-		
+
 		renderTarget.EndDrawing();
 	}
 
@@ -343,7 +343,6 @@ private:
 	void UpdateCharacter(float deltaTime)
 	{
 		const float speed = 200.0f;
-		const float rotationSpeed = 0.5f;
 
 		bool isWalking = false;
 		if (Input::IsKeyDown(Input::Key_Left))

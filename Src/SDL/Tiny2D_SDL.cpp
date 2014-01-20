@@ -680,9 +680,12 @@ void App::ShowMessageBox(const std::string& message, MessageBoxType type)
 	SDL_MessageBoxData data;
 	switch (type)
 	{
-		case MessageBoxType_Info: data.flags = SDL_MESSAGEBOX_INFORMATION; data.title = "Information"; break;
 		case MessageBoxType_Warning: data.flags = SDL_MESSAGEBOX_WARNING; data.title = "Warning"; break;
 		case MessageBoxType_Error: data.flags = SDL_MESSAGEBOX_ERROR; data.title = "Error"; break;
+		default:
+		//case MessageBoxType_Info:
+		    data.flags = SDL_MESSAGEBOX_INFORMATION; data.title = "Information";
+		    break;
 	}
 	data.message = message.c_str();
 	data.window = g_window;

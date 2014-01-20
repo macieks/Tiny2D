@@ -158,7 +158,7 @@ const char* get_eof_after(std::string& code, const char* after)
 {
 	const char* lastHash = NULL;
 	const char* ptr = code.c_str() - 1;
-	while (ptr = strstr(ptr + 1, after))
+	while ((ptr = strstr(ptr + 1, after)))
 		lastHash = ptr;
 	const char* eofAfterLastHash = lastHash ? strstr(lastHash, "\n") : NULL;
 	eofAfterLastHash = eofAfterLastHash ? (eofAfterLastHash + 1) : code.c_str();

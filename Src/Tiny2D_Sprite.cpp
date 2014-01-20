@@ -257,6 +257,9 @@ void Sprite_Update(SpriteObj* sprite, float dt)
 				it->time = it->animation->totalTime;
 				Sprite_FireAnimationEvents(sprite, it->animation, prevInstTime, it->time, dt);
 				break;
+		    default:
+			    Assert(!"Unsupported sprite animation mode");
+		        break;
 			}
 		}
 		else

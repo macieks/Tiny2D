@@ -102,6 +102,9 @@ const std::string Localization::Get(const char* stringName, const Localization::
 		case Localization::Param::Type_String:
 			string_replace_all(localized, "[" + param.name + "]", param.stringValue);
 			break;
+        default:
+            Assert(!"Unsupported localization parameter type");
+            break;
 		}
 	}
 	return localized;

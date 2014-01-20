@@ -71,7 +71,7 @@
 	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT GL_FRAMEBUFFER_INCOMPLETE_FORMATS
 #else
 	#include "SDL_opengl.h"
-	#ifdef WIN32
+	#if defined(WIN32) && defined(_MSC_VER)
 		#pragma comment(lib, "opengl32.lib")
 	#endif
 #endif
@@ -288,8 +288,8 @@ namespace Tiny2D
 	#endif
 			case Sampler::WrapMode_Repeat: return GL_REPEAT;
 			case Sampler::WrapMode_Mirror: return GL_MIRRORED_REPEAT;
+			default: return GL_CLAMP_TO_EDGE;
 		}
-		return GL_CLAMP_TO_EDGE;
 	}
 
 	inline GLenum Shape_Geometry_Type_ToOpenGL(Shape::Geometry::Type type)
@@ -299,10 +299,10 @@ namespace Tiny2D
 			case Shape::Geometry::Type_TriangleFan: return GL_TRIANGLE_FAN;
 			case Shape::Geometry::Type_Triangles: return GL_TRIANGLES;
 			case Shape::Geometry::Type_Lines: return GL_LINES;
+			default:
+                Assert(!"Unsupported primitive type");
+                return GL_TRIANGLE_FAN;
 		}
-
-		Assert(!"Unsupported primitive type");
-		return GL_TRIANGLE_FAN;
 	}
 };
 

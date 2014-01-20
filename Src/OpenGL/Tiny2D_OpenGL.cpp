@@ -46,7 +46,7 @@ void Shape_SetBlending(bool primitiveIsTranslucent, Shape::Blending blending)
 		GL(glEnable(GL_BLEND));
 		GL(glBlendFunc(GL_ONE, GL_ONE));
 		break;
-	case Shape::Blending_None:
+    default:
 		GL(glDisable(GL_BLEND));
 		break;
 	}

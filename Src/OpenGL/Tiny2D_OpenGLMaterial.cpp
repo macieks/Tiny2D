@@ -380,6 +380,9 @@ int Material_AddParameter(MaterialResource* resource, ShaderParameter* shaderPar
 	case ShaderParameterDescription::Type_Texture:
 		materialParameter.textureValue = NULL;
 		break;
+    default:
+        Assert(!"Unsupported shader parameter type");
+        break;
 	}
 	return resource->parameters.size() - 1;
 }
@@ -741,6 +744,9 @@ void Material_CommitParameter(MaterialParameter* materialParameter, ShaderParame
 #endif
 
 		break;
+    default:
+        Assert(!"Unsupported shader parameter type");
+        break;
 	}
 }
 
@@ -810,6 +816,9 @@ void Material_Draw(MaterialObj* material, const Shape::DrawParams* params)
 			GL(glEnableClientState(GL_COLOR_ARRAY));
 			GL(glColorPointer(stream->count, GL_FLOAT, stream->stride, stream->data));
 			break;
+        default:
+            Assert(!"Unsupported vertex usage");
+            break;
 		}
 #endif
 	}
@@ -866,6 +875,9 @@ void Material_Draw(MaterialObj* material, const Shape::DrawParams* params)
 		case Shape::VertexUsage_Color:
 			GL(glDisableClientState(GL_COLOR_ARRAY));
 			break;
+        default:
+            Assert(!"Unsupported vertex usage");
+            break;
 		}
 #endif
 	}

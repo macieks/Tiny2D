@@ -523,8 +523,6 @@ void Emitter_SpawnParticles(EffectObj* effect, Emitter* emitter, EmitterResource
 
 			switch (spawnArea.type)
 			{
-			    case SpawnArea::Type_Point:
-			        break;
 				case SpawnArea::Type_Circle:
 				{
 					float distanceFromCenter = Random::GetFloat(0, spawnArea.circle.radius * 2.0f);
@@ -541,6 +539,9 @@ void Emitter_SpawnParticles(EffectObj* effect, Emitter* emitter, EmitterResource
 					particle.pos += offset;
 					break;
 				}
+			    default:
+			    //case SpawnArea::Type_Point:
+			        break;
 			}
 
 			if (!resource->localSimulation)

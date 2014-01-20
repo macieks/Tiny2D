@@ -811,6 +811,9 @@ void Font_Draw(FontObj* font, const Text::DrawParams* params)
 				xy[i] += offset;
 			break;
 		}
+		default:
+            Assert(!"Unsupported text horizontal alignment");
+            break;
 	}
 
 	switch (params->verticalAlignment)
@@ -829,6 +832,9 @@ void Font_Draw(FontObj* font, const Text::DrawParams* params)
 				xy[i] += offset;
 			break;
 		}
+		default:
+            Assert(!"Unsupported text vertical alignment");
+            break;
 	}
 
 	// Set up draw params
