@@ -812,7 +812,8 @@ void Font_Draw(FontObj* font, const Text::DrawParams* params)
 			break;
 		}
 		default:
-            Assert(!"Unsupported text horizontal alignment");
+		//case Text::HorizontalAlignment_Left
+			:
             break;
 	}
 
@@ -833,7 +834,7 @@ void Font_Draw(FontObj* font, const Text::DrawParams* params)
 			break;
 		}
 		default:
-            Assert(!"Unsupported text vertical alignment");
+		//case Text::VerticalAlignment_Top:
             break;
 	}
 
