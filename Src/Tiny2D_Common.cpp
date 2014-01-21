@@ -812,8 +812,7 @@ void Font_Draw(FontObj* font, const Text::DrawParams* params)
 			break;
 		}
 		default:
-		//case Text::HorizontalAlignment_Left
-			:
+		//case Text::HorizontalAlignment_Left:
             break;
 	}
 
