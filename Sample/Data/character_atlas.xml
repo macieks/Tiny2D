@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+<Asset Type="System.Collections.Generic.Dictionary[System.String, Microsoft.Xna.Framework.Rectangle]">
+<Item><Key>HeroIdleBack_0</Key><Value>0 0 128 128</Value></Item>
+<Item><Key>HeroIdleBack_2</Key><Value>130 0 128 128</Value></Item>
+<Item><Key>HeroIdleBack_4</Key><Value>260 0 128 128</Value></Item>
+<Item><Key>HeroIdleFront_0</Key><Value>0 130 128 128</Value></Item>
+<Item><Key>HeroIdleFront_2</Key><Value>130 130 128 128</Value></Item>
+<Item><Key>HeroIdleFront_4</Key><Value>0 260 128 128</Value></Item>
+<Item><Key>HeroIdleRight_0</Key><Value>130 260 128 128</Value></Item>
+<Item><Key>HeroIdleRight_2</Key><Value>260 130 128 128</Value></Item>
+<Item><Key>HeroIdleRight_4</Key><Value>260 260 128 128</Value></Item>
+<Item><Key>HeroWalkBack_0</Key><Value>390 0 128 128</Value></Item>
+<Item><Key>HeroWalkBack_2</Key><Value>390 130 128 128</Value></Item>
+<Item><Key>HeroWalkBack_4</Key><Value>520 0 128 128</Value></Item>
+<Item><Key>HeroWalkBack_6</Key><Value>390 260 128 128</Value></Item>
+<Item><Key>HeroWalkFront_0</Key><Value>520 130 128 128</Value></Item>
+<Item><Key>HeroWalkFront_2</Key><Value>650 0 128 128</Value></Item>
+<Item><Key>HeroWalkFront_4</Key><Value>780 0 128 128</Value></Item>
+<Item><Key>HeroWalkFront_6</Key><Value>650 130 128 128</Value></Item>
+<Item><Key>HeroWalkRight_0</Key><Value>520 260 128 128</Value></Item>
+<Item><Key>HeroWalkRight_2</Key><Value>650 260 128 128</Value></Item>
+<Item><Key>HeroWalkRight_4</Key><Value>780 130 128 128</Value></Item>
+<Item><Key>HeroWalkRight_6</Key><Value>780 260 128 128</Value></Item>
+</Asset>
+</XnaContent>

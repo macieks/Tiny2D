@@ -20,7 +20,19 @@ bool SpriteResource_CheckCreated(SpriteResource* resource)
 	if (resource->state != ResourceState_CreationInProgress)
 		return resource->state == ResourceState_Created;
 
-	for (std::map<std::string, SpriteResource::Animation>::iterator it = resource->animations.begin(); it != resource->animations.end(); ++it)
+	if (resource->hasAtlas)
+	{
+		const Resource* texture = (const Resource*) Texture_Get(resource->atlas);
+		if (texture->state == ResourceState_CreationInProgress)
+			return false;
+		else if (texture->state == ResourceState_FailedToCreate)
+		{
+			resource->state = ResourceState_FailedToCreate;
+			Log::Error(string_format("Sprite %s texture atlas failed to load (asynchronously)", resource->name.c_str()));
+			return false;
+		}
+	}
+	else for (std::map<std::string, SpriteResource::Animation>::iterator it = resource->animations.begin(); it != resource->animations.end(); ++it)
 		for (std::vector<SpriteResource::Frame>::iterator it2 = it->second.frames.begin(); it2 != it->second.frames.end(); ++it2)
 		{
 			const Resource* texture = (const Resource*) Texture_Get(it2->texture);
@@ -29,15 +41,43 @@ bool SpriteResource_CheckCreated(SpriteResource* resource)
 			else if (texture->state == ResourceState_FailedToCreate)
 			{
 				resource->state = ResourceState_FailedToCreate;
-				Log::Error(string_format("SpriteObj resource %s failed to load (asynchronously)", resource->name.c_str()));
+				Log::Error(string_format("Sprite %s failed to load (asynchronously)", resource->name.c_str()));
 				return false;
 			}
 		}
 
 	resource->state = ResourceState_Created;
-	resource->width = resource->defaultAnimation->frames[0].texture.GetWidth();
-	resource->height = resource->defaultAnimation->frames[0].texture.GetHeight();
+
+	if (resource->hasAtlas)
+	{
+		resource->width = (int) resource->defaultAnimation->frames[0].rectangle.width;
+		resource->height = (int) resource->defaultAnimation->frames[0].rectangle.height;
+	}
+	else
+	{
+		resource->width = resource->defaultAnimation->frames[0].texture.GetWidth();
+		resource->height = resource->defaultAnimation->frames[0].texture.GetHeight();
+	}
 	Assert(resource->width && resource->height);
+
+	// Invert atlas entry rectangles
+
+	if (resource->hasAtlas)
+	{
+		const float atlasWidth = (float) resource->atlas.GetWidth();
+		const float atlasHeight = (float) resource->atlas.GetHeight();
+
+		for (std::map<std::string, SpriteResource::Animation>::iterator it = resource->animations.begin(); it != resource->animations.end(); ++it)
+			for (std::vector<SpriteResource::Frame>::iterator it2 = it->second.frames.begin(); it2 != it->second.frames.end(); ++it2)
+			{
+				Rect& rect = it2->rectangle;
+				rect.left = rect.left / atlasWidth;
+				rect.top = rect.top / atlasHeight;
+				rect.width = rect.width / atlasWidth;
+				rect.height = rect.height / atlasHeight;
+			}
+	}
+
 	return true;
 }
 
@@ -48,6 +88,81 @@ SpriteObj* Sprite_Clone(SpriteObj* other)
 	Resource_IncRefCount(sprite->resource);
 	Sprite_PlayAnimation(sprite);
 	return sprite;
+}
+
+typedef std::map<std::string, Rect> AtlasInfo;
+
+bool Sprite_LoadAtlasInfo(const std::string& atlasName, AtlasInfo& atlasInfo)
+{
+	const size_t dotIndex = atlasName.find_last_of('.');
+	if (dotIndex == std::string::npos)
+	{
+		Log::Error("Sprite atlas " + atlasName + " has invalid extension");
+		return false;
+	}
+
+	const std::string path = atlasName.substr(0, dotIndex) + ".xml";
+
+	XMLDoc doc;
+	if (!doc.Load(path))
+	{
+		Log::Error("Sprite atlas info not found under " + path);
+		return false;
+	}
+
+	XMLNode* rootNode = doc.AsNode()->GetFirstNode();
+	if (!rootNode)
+	{
+		Log::Error("Failed to load sprite atlas info from " + path + ", reason: root node 'XnaContent' not found.");
+		return false;
+	}
+
+	XMLNode* subRootNode = rootNode->GetFirstNode();
+	if (!subRootNode)
+	{
+		Log::Error("Failed to load sprite atlas info from " + path + ", reason: subroot node 'Asset' not found.");
+		return false;
+	}
+
+	for (XMLNode* itemNode = XMLNode_GetFirstNode(subRootNode); itemNode; itemNode = XMLNode_GetNext(itemNode))
+	{
+		XMLNode* keyNode = XMLNode_GetFirstNode(itemNode);
+		XMLNode* valueNode = XMLNode_GetNext(keyNode);
+		if (!keyNode || !valueNode)
+		{
+			Log::Error("Failed to load sprite atlas info from " + path + ", reason: 'Item' node has no 'Key' or 'Value' child node.");
+			return false;
+		}
+
+		const char* key = XMLNode_GetValue(keyNode);
+		const char* value = XMLNode_GetValue(valueNode);
+		if (!key || !value)
+		{
+			Log::Error("Failed to load sprite atlas info from " + path + ", reason: 'Key' or 'Value' are empty.");
+			return false;
+		}
+
+		Rect rect;
+		if (sscanf(value, "%f %f %f %f", &rect.left, &rect.top, &rect.width, &rect.height) != 4)
+		{
+			Log::Error("Failed to load sprite atlas info from " + path + ", reason: 'Value' couldn't be parsed into 4 numbers (left, top, width, height).");
+			return false;
+		}
+
+		atlasInfo[key] = rect;
+	}
+	return true;
+}
+
+std::string ExtractFileName(const std::string& path)
+{
+	const size_t dotIndex = path.find_last_of('.');
+	if (dotIndex == std::string::npos)
+		return std::string();
+	const size_t slashIndex = max(path.find_last_of('/'), path.find_last_of('\\'));
+	if (slashIndex == std::string::npos)
+		return path.substr(0, dotIndex);
+	return path.substr(slashIndex, dotIndex - slashIndex);
 }
 
 SpriteObj* Sprite_Create(const std::string& name, bool immediate)
@@ -82,7 +197,7 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 
 		if (const char* materialName = XMLNode_GetAttributeValue(spriteNode, "material"))
 		{
-			material = Material_Create(materialName);
+			material = Material_Create(materialName, immediate);
 			if (!material)
 			{
 				Log::Error("Failed to load sprite resource from " + path + ", reason: can't load material " + materialName);
@@ -95,6 +210,28 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 		resource->name = name;
 		Material_SetHandle(material, resource->material);
 		Resource_IncRefCount(resource);
+
+		// Load (optionally) texture atlas
+
+		AtlasInfo atlasInfo;
+		const char* atlasName = XMLNode_GetAttributeValue(spriteNode, "atlas");
+		if (atlasName)
+		{
+			resource->atlas.Create(atlasName, immediate);
+			if (!Texture_Get(resource->atlas))
+			{
+				delete resource;
+				Log::Error("Failed to load sprite resource from " + path + ", reason: can't load texture atlas " + atlasName);
+				return NULL;
+			}
+			if (!Sprite_LoadAtlasInfo(atlasName, atlasInfo))
+			{
+				delete resource;
+				Log::Error("Failed to load sprite resource from " + path + ", reason: can't load texture atlas info " + atlasName);
+				return NULL;
+			}
+			resource->hasAtlas = true;
+		}
 
 		// Load animations
 
@@ -131,12 +268,27 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 				{
 					SpriteResource::Frame& frame = vector_add(anim.frames);
 					const char* textureName = XMLNode_GetAttributeValue(elemNode, "texture");
-					frame.texture.Create(textureName, immediate);
-					if (!frame.texture.IsValid())
+					if (resource->hasAtlas)
 					{
-						Log::Error("Failed to load sprite resource from " + path + ", reason: failed to load texture " + textureName);
-						delete resource;
-						return NULL;
+						const std::string fileName = ExtractFileName(textureName);
+						Rect* rect = map_find(atlasInfo, fileName);
+						if (!rect)
+						{
+							Log::Error("Failed to load sprite resource from " + path + ", reason: failed to find texture " + textureName + " in texture atlas " + atlasName);
+							delete resource;
+							return NULL;
+						}
+						frame.rectangle = *rect;
+					}
+					else
+					{
+						frame.texture.Create(textureName, immediate);
+						if (!frame.texture.IsValid())
+						{
+							Log::Error("Failed to load sprite resource from " + path + ", reason: failed to load texture " + textureName);
+							delete resource;
+							return NULL;
+						}
 					}
 
 					time += anim.frameTime;
@@ -360,7 +512,9 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 	// Determine textures to draw
 
 	Texture* texture0 = NULL;
+	Rect* rect0 = NULL;
 	Texture* texture1 = NULL;
+	Rect* rect1 = NULL;
 	Shape::DrawParams texParams;
 	float lerp = 0.0f;
 
@@ -372,7 +526,7 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 		0, 1
 	};
 
-	if (params->texCoordRect)
+	if (!sprite->resource->hasAtlas && params->texCoordRect)
 	{
 		uv[0] = params->texCoordRect->left; uv[1] = params->texCoordRect->top;
 		uv[2] = params->texCoordRect->Right(); uv[3] = params->texCoordRect->top;
@@ -390,7 +544,13 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 	SpriteResource::Animation* animation = animationInstance->animation;
 	if (animation->frames.size() == 1)
 	{
-		texture0 = &animation->frames[0].texture;
+		if (sprite->resource->hasAtlas)
+		{
+			texture0 = &sprite->resource->atlas;
+			rect0 = &animation->frames[0].rectangle;
+		}
+		else
+			texture0 = &animation->frames[0].texture;
 		texParams.color = params->color;
 		texParams.SetNumVerts(4);
 		texParams.SetTexCoord(uv);
@@ -407,8 +567,17 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 		SpriteResource::Frame& firstFrame = animation->frames[firstFrameIndex];
 		SpriteResource::Frame& nextFrame = animation->frames[nextFrameIndex];
 
-		texture0 = &firstFrame.texture;
-		texture1 = &nextFrame.texture;
+		if (sprite->resource->hasAtlas)
+		{
+			texture0 = texture1 = &sprite->resource->atlas;
+			rect0 = &firstFrame.rectangle;
+			rect1 = &nextFrame.rectangle;
+		}
+		else
+		{
+			texture0 = &firstFrame.texture;
+			texture1 = &nextFrame.texture;
+		}
 
 		texParams.SetNumVerts(4);
 		texParams.SetTexCoord(uv, 0);
@@ -449,19 +618,19 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 	texParams.SetPosition(xy);
 
 	// Draw
-#if 0
-	if (texture1)
-		Texture_DrawBlended(texture0, texture1, &texParams, lerp);
-	else
-		Texture_Draw(texture0, &texParams);
-#else
+
 	Material* material = &sprite->resource->material;
 	if (!material->IsValid())
 		material = &App::GetDefaultMaterial();
 	material->SetFloatParameter("Color", (const float*) &texParams.color, 4);
 	if (texture1)
 	{
-		material->SetTechnique("tex_lerp_col");
+		material->SetTechnique(sprite->resource->hasAtlas ? "tex_lerp_col_atlas" : "tex_lerp_col");
+		if (sprite->resource->hasAtlas)
+		{
+			material->SetFloatParameter("AtlasEntry0", &rect0->left, 4);
+			material->SetFloatParameter("AtlasEntry1", &rect1->left, 4);
+		}
 		material->SetTextureParameter("ColorMap0", *texture0);
 		material->SetTextureParameter("ColorMap1", *texture1);
 		material->SetFloatParameter("Scale", &lerp);
@@ -469,11 +638,12 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 	}
 	else
 	{
-		material->SetTechnique("tex_col");
+		material->SetTechnique(sprite->resource->hasAtlas ? "tex_col_atlas" : "tex_col");
+		if (sprite->resource->hasAtlas)
+			material->SetFloatParameter("AtlasEntry", &rect0->left, 4);
 		material->SetTextureParameter("ColorMap", *texture0);
 		material->Draw(&texParams);
 	}
-#endif
 }
 
 int Sprite_GetWidth(SpriteObj* sprite)

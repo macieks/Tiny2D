@@ -595,8 +595,6 @@ namespace Tiny2D
 		bool IsValid() const;
 		//! Sets the volume of the sound; expects value within 0..1 range
 		void SetVolume(float volume);
-		//! Sets the pitch of the sound; expects value within 0..1 range
-		void SetPitch(float volume);
 		//! Starts playing the sound
 		void Play(bool loop = false, float fadeInTime = 0.2f);
 		//! Stops playing the sound
@@ -611,7 +609,7 @@ namespace Tiny2D
 	class Effect
 	{
 	public:
-		// Constructs an empty effect
+		//! Constructs an empty effect
 		Effect();
 		//! Copy constructor; internally creates new effect instance object (with its own state) and increases reference count of the effect resource
 		Effect(const Effect& other);
@@ -764,7 +762,7 @@ namespace Tiny2D
 		static void					EnableOnScreenDebugInfo(bool enable);
 		//! Puts current thread to sleep
 		static void					Sleep(float seconds);
-		//! Runs command; for example setting command to "http://www.pixelelephant.com" will open webpage in a browser
+		//! Runs command; for example setting command to "http://www.pixelelephant.com" will open webpage in a browser; note: currently only works on Windows
 		static void					RunCommand(const std::string& command);
 	};
 

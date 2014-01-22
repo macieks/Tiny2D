@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<sprite material="common/default">
+<sprite material="common/default" atlas="character_atlas.png">
   <animation name="idle_right" frameTime="0.3" isDefault="true">
     <frame texture="HeroIdleRight_0.png"/>
 	<frame texture="HeroIdleRight_2.png"/>

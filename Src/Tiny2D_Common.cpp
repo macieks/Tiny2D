@@ -131,8 +131,8 @@ App::DisplaySettings::DisplaySettings() :
 	fullscreen(true)
 {
 #ifdef DESKTOP
-	width = 640;
-	height = 480;
+	width = 800;
+	height = 600;
 #endif
 
 #ifdef DEBUG

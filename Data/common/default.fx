@@ -36,6 +36,22 @@ void tex_vs()
 
 #version 130
 
+uniform vec4 AtlasEntry;
+
+out vec2 TEXCOORD0;
+
+#include "common/common.vs"
+
+void tex_atlas_vs()
+{
+	gl_Position = GetPosition();
+	TEXCOORD0 = gl_MultiTexCoord0.xy * AtlasEntry.zw + AtlasEntry.xy;
+}
+
+###splitter###
+
+#version 130
+
 out vec2 TEXCOORD0;
 out vec4 COLOR0;
 
@@ -90,6 +106,25 @@ void tex2_vs()
 	gl_Position = GetPosition();
 	TEXCOORD0 = gl_MultiTexCoord0.xy;
 	TEXCOORD1 = gl_MultiTexCoord1.xy;
+}
+
+###splitter###
+
+#version 130
+
+uniform vec4 AtlasEntry0;
+uniform vec4 AtlasEntry1;
+
+out vec2 TEXCOORD0;
+out vec2 TEXCOORD1;
+
+#include "common/common.vs"
+
+void tex2_atlas_vs()
+{
+	gl_Position = GetPosition();
+	TEXCOORD0 = gl_MultiTexCoord0.xy * AtlasEntry0.zw + AtlasEntry0.xy;
+	TEXCOORD1 = gl_MultiTexCoord1.xy * AtlasEntry1.zw + AtlasEntry1.xy;
 }
 
 ###splitter###

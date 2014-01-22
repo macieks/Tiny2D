@@ -150,7 +150,6 @@ bool Sound::Create(const std::string& path, bool isMusic, bool immediate) { if (
 void Sound::Destroy(float fadeOutTime) { if (obj) { Sound_Destroy(obj, fadeOutTime); obj = NULL; } }
 bool Sound::IsValid() const { return obj != NULL; }
 void Sound::SetVolume(float volume) { if (obj) Sound_SetVolume(obj, volume); }
-void Sound::SetPitch(float volume) { if (obj) Sound_SetPitch(obj, volume); }
 void Sound::Play(bool loop, float fadeInTime) { if (obj) Sound_Play(obj, loop, fadeInTime); }
 void Sound::Stop() { if (obj) Sound_Stop(obj); }
 bool Sound::IsPlaying() { return obj ? Sound_IsPlaying(obj) : false; }

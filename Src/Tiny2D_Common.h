@@ -517,6 +517,7 @@ namespace Tiny2D
 		struct Frame
 		{
 			Texture texture;
+			Rect rectangle; // Coordinates within texture atlas
 		};
 		struct Event
 		{
@@ -532,6 +533,8 @@ namespace Tiny2D
 			std::vector<Frame> frames;
 			std::vector<Event> events;
 		};
+		bool hasAtlas;
+		Texture atlas;
 		std::map<std::string, Animation> animations;
 		Animation* defaultAnimation;
 		int width;
@@ -540,6 +543,7 @@ namespace Tiny2D
 
 		SpriteResource() :
 			Resource("sprite"),
+			hasAtlas(false),
 			width(0),
 			height(0)
 		{}
