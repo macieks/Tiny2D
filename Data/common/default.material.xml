@@ -8,20 +8,12 @@
 		<shader type="vertex" path="common/default.fx" entry="tex_vs"/>
 		<shader type="fragment" path="common/default.fx" entry="tex_col_fs"/>
 	</technique>
-	<technique name="tex_col_atlas">
-		<shader type="vertex" path="common/default.fx" entry="tex_atlas_vs"/>
-		<shader type="fragment" path="common/default.fx" entry="tex_col_fs"/>
-	</technique>
 	<technique name="tex_vcol">
 		<shader type="vertex" path="common/default.fx" entry="tex_vcol_vs"/>
 		<shader type="fragment" path="common/default.fx" entry="tex_vcol_fs"/>
 	</technique>
 	<technique name="tex_lerp_col">
 		<shader type="vertex" path="common/default.fx" entry="tex2_vs"/>
-		<shader type="fragment" path="common/default.fx" entry="tex_lerp_col_fs"/>
-	</technique>
-	<technique name="tex_lerp_col_atlas">
-		<shader type="vertex" path="common/default.fx" entry="tex2_atlas_vs"/>
 		<shader type="fragment" path="common/default.fx" entry="tex_lerp_col_fs"/>
 	</technique>
 </material>

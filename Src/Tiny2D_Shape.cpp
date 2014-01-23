@@ -110,9 +110,9 @@ void Shape::DrawCircle(const Vec2& center, float radius, int numSegments, float 
 	Shape::Draw(&params);
 }
 
-void Shape::DrawLine(const Vec2& point0, const Vec2& point1, const Color& color)
+void Shape::DrawLine(const Vec2& start, const Vec2& end, const Color& color)
 {
-	const Vec2 points[] = {point0, point1};
+	const Vec2 points[] = {start, end};
 
 	Shape::DrawParams params;
 	params.color = color;

@@ -163,8 +163,8 @@ namespace Tiny2D
 		{
 			Blending_Default = 0,	//!< Defaults to (SrcAlpha, 1-ScrAlpha) for transparent textures; otherwise disabled
 			Blending_None,			//!< Blending disabled
-			Blending_Additive,		//!< (One, One)
-			Blending_Alpha,			//!< (SrcAlpha, 1-ScrAlpha)
+			Blending_Additive,		//!< Additive blending (One, One)
+			Blending_Alpha,			//!< Standard alpha-blending mode using alpha channel to perform blending (SrcAlpha, 1-ScrAlpha)
 
 			Blending_COUNT
 		};
@@ -194,7 +194,7 @@ namespace Tiny2D
 			const void* data;		//!< Vertex data
 			VertexFormat format;	//!< Vertex format
 			int count;				//!< Number of vertices
-			bool isNormalized;		//!< Is vertex format normalized (either to -1..1 or 0..1)
+			bool isNormalized;		//!< Is vertex format normalized? (either to -1..1 or 0..1)
 			VertexUsage usage;		//!< Vertex usage
 			int usageIndex;			//!< Vertex usage index
 			int stride;				//!< Vertex stride (difference in bytes between the beginning of 2 vertices)
@@ -270,12 +270,10 @@ namespace Tiny2D
 		static void			Draw(const DrawParams* params);
 		//! Draws rectangle
 		static void			DrawRectangle(const Rect& rect, float rotation = 0.0f, const Color& color = Color::White);
-		//! Draws rectangle
-		static inline void	DrawRectangle(float x0, float y0, float x1, float y1, float rotation = 0.0f, const Color& color = Color::White) { Shape::DrawRectangle(Rect(x0, y0, x1 - x0, y1 - y0), rotation, color); }
 		//! Draws circle
 		static void			DrawCircle(const Vec2& center, float radius, int numSegments = 12, float rotation = 0.0f, const Color& color = Color::White);
 		//! Draws the line
-		static void			DrawLine(const Vec2& point0, const Vec2& point1, const Color& color = Color::White);
+		static void			DrawLine(const Vec2& start, const Vec2& end, const Color& color = Color::White);
 		//! Draws the lines; expects 'numLines' * 2 elements in 'points' array
 		static void			DrawLines(const Vec2* points, int numLines, const Color& color = Color::White);
 	};
@@ -288,8 +286,8 @@ namespace Tiny2D
 		{
 			WrapMode_Clamp = 0,		//!< Clamps to edges
 			WrapMode_ClampToBorder,	//!< Clamps to border color (specified via Sampler::borderColor); note: not supported on OpenGL ES platforms (falls back to WrapMode_Clamp)
-			WrapMode_Repeat,		//!< Repeat
-			WrapMode_Mirror,		//!< Mirrored repeat
+			WrapMode_Repeat,		//!< Repeats
+			WrapMode_Mirror,		//!< Mirrors repeatedly
 
 			WrapMode_COUNT
 		};
@@ -443,7 +441,7 @@ namespace Tiny2D
 
 			Vec2 position;		//!< Left top coordinate; defaults to (10.0f, 10.0f)
 
-			const Rect* rect;			//!< Optional rectangle; defaults to NULL
+			const Rect* rect;			//!< Optional coordinates specified via rectangle; defaults to NULL; if set 'position' is not used
 			const Rect* texCoordRect;	//!< Optional texture coordinates to use; defaults to NULL
 
 			float scale;		//!< Scale; defaults to 1.0f

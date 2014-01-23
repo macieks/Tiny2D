@@ -496,6 +496,15 @@ void Sprite_PlayAnimation(SpriteObj* sprite, const std::string& name, Sprite::An
 	animationInstance.weightChangeSpeed = weightChangeSpeed;
 }
 
+void Sprite_RectifySpriteUVs(float* uv, const Rect& rect)
+{
+	for (int i = 0; i < 8; i += 2)
+	{
+		uv[i] = uv[i] * rect.width + rect.left;
+		uv[i + 1] = uv[i + 1] * rect.height + rect.top;
+	}
+}
+
 void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 {
 	if (!SpriteResource_CheckCreated(sprite->resource))
@@ -512,9 +521,7 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 	// Determine textures to draw
 
 	Texture* texture0 = NULL;
-	Rect* rect0 = NULL;
 	Texture* texture1 = NULL;
-	Rect* rect1 = NULL;
 	Shape::DrawParams texParams;
 	float lerp = 0.0f;
 
@@ -526,7 +533,9 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 		0, 1
 	};
 
-	if (!sprite->resource->hasAtlas && params->texCoordRect)
+	float uv1[8];
+
+	if (params->texCoordRect)
 	{
 		uv[0] = params->texCoordRect->left; uv[1] = params->texCoordRect->top;
 		uv[2] = params->texCoordRect->Right(); uv[3] = params->texCoordRect->top;
@@ -547,7 +556,7 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 		if (sprite->resource->hasAtlas)
 		{
 			texture0 = &sprite->resource->atlas;
-			rect0 = &animation->frames[0].rectangle;
+			Sprite_RectifySpriteUVs(uv, animation->frames[0].rectangle);
 		}
 		else
 			texture0 = &animation->frames[0].texture;
@@ -570,8 +579,10 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 		if (sprite->resource->hasAtlas)
 		{
 			texture0 = texture1 = &sprite->resource->atlas;
-			rect0 = &firstFrame.rectangle;
-			rect1 = &nextFrame.rectangle;
+			for (int i = 0; i < 8; i++)
+				uv1[i] = uv[i];
+			Sprite_RectifySpriteUVs(uv, firstFrame.rectangle);
+			Sprite_RectifySpriteUVs(uv1, nextFrame.rectangle);
 		}
 		else
 		{
@@ -581,7 +592,7 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 
 		texParams.SetNumVerts(4);
 		texParams.SetTexCoord(uv, 0);
-		texParams.SetTexCoord(uv, 1);
+		texParams.SetTexCoord(uv1, 1);
 
 		lerp = frameIndexF - firstFrameIndexF;
 	}
@@ -625,12 +636,7 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 	material->SetFloatParameter("Color", (const float*) &texParams.color, 4);
 	if (texture1)
 	{
-		material->SetTechnique(sprite->resource->hasAtlas ? "tex_lerp_col_atlas" : "tex_lerp_col");
-		if (sprite->resource->hasAtlas)
-		{
-			material->SetFloatParameter("AtlasEntry0", &rect0->left, 4);
-			material->SetFloatParameter("AtlasEntry1", &rect1->left, 4);
-		}
+		material->SetTechnique("tex_lerp_col");
 		material->SetTextureParameter("ColorMap0", *texture0);
 		material->SetTextureParameter("ColorMap1", *texture1);
 		material->SetFloatParameter("Scale", &lerp);
@@ -638,9 +644,7 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 	}
 	else
 	{
-		material->SetTechnique(sprite->resource->hasAtlas ? "tex_col_atlas" : "tex_col");
-		if (sprite->resource->hasAtlas)
-			material->SetFloatParameter("AtlasEntry", &rect0->left, 4);
+		material->SetTechnique("tex_col");
 		material->SetTextureParameter("ColorMap", *texture0);
 		material->Draw(&texParams);
 	}

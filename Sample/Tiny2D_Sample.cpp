@@ -294,7 +294,7 @@ private:
 
 		Shape::DrawCircle(Vec2(50, 50), 50, 5, moonPosition.x * 0.1f, Color(1, 0, 0, 0.7f));
 		Shape::DrawCircle(Vec2(130, 130), 70, 15, -moonPosition.x * 0.1f, Color(0, 1, 0, 0.7f));
-		Shape::DrawRectangle(150, 150, 240, 220, moonPosition.x * 0.05f, Color(0, 0, 1, 0.7f));
+		Shape::DrawRectangle(Rect(150, 150, 90, 70), moonPosition.x * 0.05f, Color(0, 0, 1, 0.7f));
 		Shape::DrawLine(Vec2(10, 10), Vec2(200, 200), Color::White);
 
 		// Draw debug text

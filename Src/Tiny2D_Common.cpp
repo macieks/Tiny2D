@@ -301,7 +301,7 @@ void App_DrawDebugInfo()
 		g_fps,
 		g_updateTime * 1000.0f, g_renderTime * 1000.0f);
 
-	Shape::DrawRectangle(5, 5, 350, 50, 0, Color(0, 0, 0, 0.3f));
+	Shape::DrawRectangle(Rect(5, 5, 350, 45), 0, Color(0, 0, 0, 0.3f));
 	g_defaultFont.Draw(statsString.c_str(), Vec2(10.0f, 10.0f));
 }
 
