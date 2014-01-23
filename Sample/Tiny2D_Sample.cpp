@@ -35,7 +35,7 @@ public:
 
 		font.Create("common/courbd.ttf", 28, Font::Flags_Italic, false);
 
-		// Load game data asynchronously
+		// Load (asynchronously) remaining data and initialize it
 
 		character.Create("character", false);
 		character.PlayAnimation("idle_right");
@@ -108,7 +108,7 @@ public:
 
 					// Play music
 
-					music.Play(false, 2.0f);
+					music.Play(true, 2.0f);
 				}
 				break;
 
@@ -116,6 +116,14 @@ public:
 
 			case State_Active:
 			{
+				// Quit?
+
+				if (Input::WasKeyPressed(Input::Key_Escape) || Input::WasKeyPressed(Input::Key_Android_Back))
+				{
+					App::Quit();
+					break;
+				}
+
 				// Update character controllable by the user
 
 				UpdateCharacter(deltaTime);
@@ -136,11 +144,6 @@ public:
 				moonPosition.x = moonPosition.x - deltaTime * 30.0f;
 				if (moonPosition.x < (float) -moon.GetWidth())
 					moonPosition.x = (float) App::GetWidth();
-
-				// Quit an app?
-
-				if (Input::WasKeyPressed(Input::Key_Escape) || Input::WasKeyPressed(Input::Key_Android_Back))
-					App::Quit();
 
 				// Enable 'quake' postprocess?
 
@@ -211,10 +214,10 @@ public:
 				switch (state)
 				{
 				case State_Loading:
-					fontParams.text = Localization::Get("texts.LoadingScreen.Loading");
+					fontParams.text = Localization::Get("texts.loading_screen.loading");
 					break;
 				case State_Loaded:
-					fontParams.text = Localization::Get("texts.LoadingScreen.Continue");
+					fontParams.text = Localization::Get("texts.loading_screen.continue");
 					break;
 				}
 				font.Draw(&fontParams);
@@ -228,7 +231,7 @@ public:
 				const Localization::Param localizationParam("name", "Tiny2D");
 
 				Text::DrawParams params;
-				params.text = Localization::Get("texts.General.Info", &localizationParam, 1);
+				params.text = Localization::Get("texts.general.info", &localizationParam, 1);
 				params.position = Vec2(0.0f, 0.0f);
 				params.width = (float) App::GetWidth();
 				params.height = (float) App::GetHeight();
