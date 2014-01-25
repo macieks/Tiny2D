@@ -686,6 +686,11 @@ void Emitter_Update(EffectObj* effect, Emitter* emitter, EmitterResource* resour
 	Emitter_SpawnParticles(effect, emitter, resource, deltaTime);
 }
 
+ResourceState Effect_GetState(EffectObj* effect)
+{
+	return effect->resource->state;
+}
+
 bool Effect_Update(EffectObj* effect, float deltaTime)
 {
 	// Update transform
@@ -773,7 +778,7 @@ void Emitter_Draw(EffectObj* effect, Emitter* emitter, EmitterResource* resource
 	params.SetTexCoord(&verts[0].tex, 0, sizeof(ParticleVertex));
 	params.SetColor(&verts[0].color, 0, sizeof(ParticleVertex));
 
-	Material& material = resource->material.IsValid() ? resource->material : App::GetDefaultMaterial();
+	Material& material = resource->material.GetState() == ResourceState_Created ? resource->material : App::GetDefaultMaterial();
 
 	material.SetTechnique(resource->technique.empty() ? "tex_vcol" : resource->technique);
 	material.SetTextureParameter("ColorMap", resource->colorMap);
@@ -813,7 +818,7 @@ EffectResource* EffectResource_Load(const std::string& name, bool immediate)
 
 	EffectResource* resource = new EffectResource();
 	resource->name = name;
-	resource->state = ResourceState_CreationInProgress;
+	resource->state = ResourceState_Creating;
 
 	for (XMLNode* emitterNode = emittersNode->GetFirstNode("emitter"); emitterNode; emitterNode = emitterNode->GetNext("emitter"))
 	{

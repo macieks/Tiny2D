@@ -446,14 +446,14 @@ bool App_Startup(App::StartupParams* params)
 	Log::Info("Loading default resources");
 
 	g_defaultMaterial.Create(params->defaultMaterialName);
-	if (!g_defaultMaterial.IsValid())
+	if (g_defaultMaterial.GetState() != ResourceState_Created)
 	{
 		Log::Error(string_format("Failed to initialize app, reason: failed to load default material %s", params->defaultMaterialName.c_str()));
 		return false;
 	}
 
 	g_defaultFont.Create(params->defaultFontName, params->defaultFontSize);
-	if (!g_defaultFont.IsValid())
+	if (g_defaultFont.GetState() != ResourceState_Created)
 	{
 		Log::Error(string_format("Failed to initialize app, reason: failed to load default font %s", params->defaultFontName.c_str()));
 		return false;
@@ -463,7 +463,7 @@ bool App_Startup(App::StartupParams* params)
 	if (g_emulateTouchpadWithMouse)
 	{
 		g_cursorSprite.Create(params->defaultCursorName);
-		if (!g_cursorSprite.IsValid())
+		if (g_cursorSprite.GetState() != ResourceState_Created)
 		{
 			Log::Error(string_format("Failed to initialize app, reason: failed to load cursor %s", params->defaultCursorName.c_str()));
 			return false;
@@ -929,7 +929,7 @@ void Texture_DoneFunc(bool canceled, void* userData)
 
 	if (!jobData->surface || !Texture_CreateFromSurface(jobData->resource, jobData->surface))
 	{
-		jobData->resource->state = ResourceState_FailedToCreate;
+		jobData->resource->state = ResourceState_AsyncError;
 		if (canceled)
 			Log::Info(string_format("Texture %s async loading was canceled", jobData->resource->name.c_str()));
 		else
@@ -1004,7 +1004,7 @@ TextureObj* Texture_Create(const std::string& name, bool immediate)
 		resource = new TextureObj();
 		resource->isLoaded = true;
 		resource->name = name;
-		resource->state = ResourceState_CreationInProgress;
+		resource->state = ResourceState_Creating;
 		Resource_IncRefCount(resource);
 
 		TextureJobData* jobData = new TextureJobData();
@@ -1179,7 +1179,7 @@ void SoundResource_DoneFunc(bool canceled, void* userData)
 		jobData->resource->state = ResourceState_Created;
 	else
 	{
-		jobData->resource->state = ResourceState_FailedToCreate;
+		jobData->resource->state = ResourceState_AsyncError;
 		if (canceled)
 			Log::Info(string_format("Sound %s async loading was canceled", jobData->resource->name.c_str()));
 		else
@@ -1210,7 +1210,7 @@ SoundObj* Sound_Create(const std::string& name, bool isMusic, bool immediate)
 
 		resource = new SoundResource();
 		resource->name = name;
-		resource->state = immediate ? ResourceState_Created : ResourceState_CreationInProgress;
+		resource->state = immediate ? ResourceState_Created : ResourceState_Creating;
 		resource->chunk = chunk;
 		resource->music = music;
 
@@ -1250,7 +1250,7 @@ void Sound_Destroy(SoundObj* sound, float fadeOutTime)
 
 	if (!Resource_DecRefCount(sound->resource))
 	{
-		if (sound->resource->state == ResourceState_CreationInProgress)
+		if (sound->resource->state == ResourceState_Creating)
 			Jobs::CancelJob(sound->resource->jobID);
 
 		if (sound->resource->chunk)
@@ -1296,6 +1296,11 @@ void Sound_SetPitch(SoundObj* sound, float pitch)
 	else
 		Mix_PitchMusic(Sound_ToSDLPitch(pitch));
 #endif
+}
+
+ResourceState Sound_GetState(SoundObj* sound)
+{
+	return sound->resource->state;
 }
 
 void Sound_Play(SoundObj* sound, bool loop, float fadeInTime)
@@ -1410,6 +1415,7 @@ FontObj* Font_Create(const std::string& faceName, int size, unsigned int flags, 
 		TTF_SetFontKerning(font, 1);
 
 		resource = new FontObj();
+		resource->state = ResourceState_Created;
 		resource->font = font;
 		resource->name = name;
 		resource->size = size;

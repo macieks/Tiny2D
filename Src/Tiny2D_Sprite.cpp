@@ -17,17 +17,17 @@ Sprite::DrawParams::DrawParams() :
 
 bool SpriteResource_CheckCreated(SpriteResource* resource)
 {
-	if (resource->state != ResourceState_CreationInProgress)
+	if (resource->state != ResourceState_Creating)
 		return resource->state == ResourceState_Created;
 
 	if (resource->hasAtlas)
 	{
 		const Resource* texture = (const Resource*) Texture_Get(resource->atlas);
-		if (texture->state == ResourceState_CreationInProgress)
+		if (texture->state == ResourceState_Creating)
 			return false;
-		else if (texture->state == ResourceState_FailedToCreate)
+		else if (texture->state == ResourceState_AsyncError)
 		{
-			resource->state = ResourceState_FailedToCreate;
+			resource->state = ResourceState_AsyncError;
 			Log::Error(string_format("Sprite %s texture atlas failed to load (asynchronously)", resource->name.c_str()));
 			return false;
 		}
@@ -36,11 +36,11 @@ bool SpriteResource_CheckCreated(SpriteResource* resource)
 		for (std::vector<SpriteResource::Frame>::iterator it2 = it->second.frames.begin(); it2 != it->second.frames.end(); ++it2)
 		{
 			const Resource* texture = (const Resource*) Texture_Get(it2->texture);
-			if (texture->state == ResourceState_CreationInProgress)
+			if (texture->state == ResourceState_Creating)
 				return false;
-			else if (texture->state == ResourceState_FailedToCreate)
+			else if (texture->state == ResourceState_AsyncError)
 			{
-				resource->state = ResourceState_FailedToCreate;
+				resource->state = ResourceState_AsyncError;
 				Log::Error(string_format("Sprite %s failed to load (asynchronously)", resource->name.c_str()));
 				return false;
 			}
@@ -206,7 +206,7 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 		}
 
 		resource = new SpriteResource();
-		resource->state = ResourceState_CreationInProgress;
+		resource->state = ResourceState_Creating;
 		resource->name = name;
 		Material_SetHandle(material, resource->material);
 		Resource_IncRefCount(resource);
@@ -283,7 +283,7 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 					else
 					{
 						frame.texture.Create(textureName, immediate);
-						if (!frame.texture.IsValid())
+						if (frame.texture.GetState() != ResourceState_Created)
 						{
 							Log::Error("Failed to load sprite resource from " + path + ", reason: failed to load texture " + textureName);
 							delete resource;
@@ -321,7 +321,7 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 		}
 
 		resource = new SpriteResource();
-		resource->state = ResourceState_CreationInProgress;
+		resource->state = ResourceState_Creating;
 		resource->name = name;
 		Resource_IncRefCount(resource);
 
@@ -631,7 +631,7 @@ void Sprite_Draw(SpriteObj* sprite, const Sprite::DrawParams* params)
 	// Draw
 
 	Material* material = &sprite->resource->material;
-	if (!material->IsValid())
+	if (material->GetState() != ResourceState_Created)
 		material = &App::GetDefaultMaterial();
 	material->SetFloatParameter("Color", (const float*) &texParams.color, 4);
 	if (texture1)

@@ -135,7 +135,7 @@ void Postprocessing::EnableOldTV(bool enable)
 		oldtv->tvAndNoiseMap.Create("common/tv.png");
 		oldtv->material.Create("common/postprocessing");
 	}
-	else
+	else if (oldtv && !enable)
 	{
 		delete oldtv;
 		oldtv = NULL;
@@ -338,6 +338,11 @@ struct RainyGlass
 
 	Color dropletColor;
 	float rainEvaporation;
+
+	float dropletSpeed;
+
+	float dropletMinSize;
+	float dropletMaxSize;
 };
 
 RainyGlass* rain = NULL;
@@ -347,7 +352,7 @@ bool Postprocessing::IsRainyGlassEnabled()
 	return rain != NULL;
 }
 
-void Postprocessing::EnableRainyGlass(bool enable, float spawnFrequency)
+void Postprocessing::EnableRainyGlass(bool enable, float spawnFrequency, float dropletSpeed, float dropletMinSize, float dropletMaxSize)
 {
 	if (!rain && enable)
 	{
@@ -362,7 +367,7 @@ void Postprocessing::EnableRainyGlass(bool enable, float spawnFrequency)
 		rain->lastSpawnTime = 0;
 		rain->rainEvaporation = 0;
 	}
-	else
+	else if (rain && !enable)
 	{
 		delete rain;
 		rain = NULL;
@@ -370,6 +375,9 @@ void Postprocessing::EnableRainyGlass(bool enable, float spawnFrequency)
 
 	if (enable)
 	{
+		rain->dropletMinSize = dropletMinSize;
+		rain->dropletMaxSize = dropletMaxSize;
+		rain->dropletSpeed = dropletSpeed;
 		rain->spawnFrequency = spawnFrequency;
 	}
 }
@@ -382,11 +390,6 @@ void Postprocessing_UpdateRainyGlass(float deltaTime)
 void Postprocessing_UpdateRainyGlassStep(float deltaTime)
 {
 	rain->time += deltaTime;
-
-	const float dropletSpeed = 0.7f;
-	const float dropletMinSpawnSize = 0.01f;
-	const float dropletMaxSpawnSize = 0.02f;
-	const float dropletMaxSize = 0.05f;
 
 	const float newDirPercentage = 0.2f;
 	const float minNextChangeTime = 0.05f;
@@ -415,12 +418,12 @@ void Postprocessing_UpdateRainyGlassStep(float deltaTime)
 		rain->lastSpawnTime = rain->time;
 
 		RainyGlass::Droplet& d = vector_add(droplets);
-		d.size = Random::GetFloat(dropletMinSpawnSize, dropletMaxSpawnSize);
+		d.size = Random::GetFloat(rain->dropletMinSize, rain->dropletMaxSize);
 		d.pos.Set(Random::GetFloat(0, 1), 0 - d.size);
 
 		d.velocity.Set(Random::GetFloat(-0.4f, 0.0f), Random::GetFloat(1.0f, 1.0f));
 		d.velocity.Normalize();
-		d.velocity *= dropletSpeed * (d.size / dropletMaxSize);
+		d.velocity *= rain->dropletSpeed * (d.size / rain->dropletMaxSize);
 		d.nextVelocityChangeTime = rain->time + Random::GetFloat(minNextChangeTime, maxNextChangeTime);
 	}
 
@@ -437,7 +440,7 @@ void Postprocessing_UpdateRainyGlassStep(float deltaTime)
 			it->velocity.Normalize();
 			it->velocity = Vec2::Lerp(it->velocity, newDir, newDirPercentage);
 			it->velocity.Normalize();
-			it->velocity *= dropletSpeed * (it->size / dropletMaxSize);
+			it->velocity *= rain->dropletSpeed * (it->size / rain->dropletMaxSize);
 			it->nextVelocityChangeTime = rain->time + Random::GetFloat(minNextChangeTime, maxNextChangeTime);
 		}
 		it->pos += it->velocity * deltaTime;
@@ -457,7 +460,7 @@ void Postprocessing_DrawRainyGlass(Texture& renderTarget, Texture& scene)
 
 	// Evaporation
 
-	if (rain->dropletBuffer.IsValid())
+	if (rain->dropletBuffer.GetState() == ResourceState_Created)
 	{
 		if (rain->rainEvaporation > 0.02f) // Apply rain evaporation
 		{
@@ -544,7 +547,7 @@ void Postprocessing_DrawRainyGlass(Texture& renderTarget, Texture& scene)
 
 	// Swap droplet buffer
 
-	if (rain->dropletBuffer.IsValid())
+	if (rain->dropletBuffer.GetState() == ResourceState_Created)
 		RenderTexturePool::Release(rain->dropletBuffer);
 	rain->dropletBuffer = dropletTarget;
 

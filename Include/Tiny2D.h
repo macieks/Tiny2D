@@ -309,6 +309,17 @@ namespace Tiny2D
 		inline void SetWrapMode(WrapMode u, WrapMode v, const Color& borderColor = Color::White) { uWrapMode = u; vWrapMode = v; this->borderColor = borderColor; }
 	};
 
+	//! Possible state of resource objects
+	enum ResourceState
+	{
+		ResourceState_Uninitialized = 0,	//!< Resource hasn't been initialized yet (via Create() function)
+		ResourceState_Created,				//!< Resource has been successfully created and can now be used
+		ResourceState_Creating,				//!< Resource is being (asynchronously) created
+		ResourceState_AsyncError,			//!< Resource asynchronous initialization failed (only returned on asynchronous failure if Create() function returned true)
+
+		ResourceState_COUNT
+	};
+
 	//! Texture handle (optionally render target too)
 	class Texture
 	{
@@ -319,13 +330,15 @@ namespace Tiny2D
 		Texture(const Texture& other);
 		//! Destroys the texture if not done before
 		~Texture();
+		//! Gets resource state
+		ResourceState GetState() const;
 		//! Copy operator; internally only increases texture reference count
 		void operator = (const Texture& other);
 		//! Equality operator
 		bool operator == (const Texture& other) const;
 		//! Inequality operator
 		bool operator != (const Texture& other) const;
-		//! Creates texture of given name; immediate set to false indicates to load the texture asynchronously
+		//! Creates texture of given name; 'immediate' set to true indicates to load it synchronously
 		bool Create(const std::string& path, bool immediate = true);
 		//! Creates texture that can also be used as a render target; created texture has RGBA components
 		bool CreateRenderTarget(int width, int height);
@@ -333,8 +346,6 @@ namespace Tiny2D
 		void Destroy();
 		//! Saves texture under folowing path; supported formats are: PNG and BMP; by default alpha channel is not saved even if present
 		bool Save(const std::string& path, bool saveAlpha = false);
-		//! Checks if texture is valid
-		bool IsValid() const;
 		//! Draws texture with given shape parameters
 		void Draw(const Shape::DrawParams* params, const Sampler& sampler = Sampler::Default);
 		//! Draws texture
@@ -371,18 +382,18 @@ namespace Tiny2D
 		Material(const Material& other);
 		//! Destroys material
 		~Material();
+		//! Gets resource state
+		ResourceState GetState() const;
 		//! Copy operator; internally creates new material instance object (with custom set of material parameter values) and increases reference count of the material resource
 		void operator = (const Material& other);
 		//! Equality operator
 		bool operator == (const Material& other) const;
 		//! Inequality operator
 		bool operator != (const Material& other) const;
-		//! Creates material from a material file; expects name.material.xml file to be present
+		//! Creates material from a material file; expects name.material.xml file to be present; 'immediate' set to true indicates to load it synchronously
 		bool Create(const std::string& name, bool immediate = true);
 		//! Destroys material
 		void Destroy();
-		//! Gets whether material is valid (successfully loaded)
-		bool IsValid() const;
 		//! Gets index of the technique within material or -1 if not found
 		int GetTechniqueIndex(const std::string& name);
 		//! Sets current technique by index
@@ -459,14 +470,14 @@ namespace Tiny2D
 		Sprite(const Sprite& other);
 		//! Destructs sprite
 		~Sprite();
+		//! Gets resource state
+		ResourceState GetState() const;
 		//! Copy operator; internally creates new sprite instance object (with its own state) and increases reference count of the sprite resource
 		void operator = (const Sprite& other);
-		//! Creates sprite from a file; name can either be the name of the .sprite.xml file or full path to the image file (including image file extension)
+		//! Creates sprite from a file; name can either be the name of the .sprite.xml file or full path to the image file (including image file extension); 'immediate' set to true indicates to load it synchronously
 		bool Create(const std::string& name, bool immediate = true);
 		//! Destroys the sprite
 		void Destroy();
-		//! Gets whether sprite is valid (successfully loaded)
-		bool IsValid() const;
 		//! Sets event callback (events are defined in .sprite.xml file)
 		void SetEventCallback(EventCallback callback, void* userData);
 		//! Updates sprite state by given delta time
@@ -551,14 +562,14 @@ namespace Tiny2D
 		Font(const Font& other);
 		//! Destroys the font
 		~Font();
+		//! Gets resource state
+		ResourceState GetState() const;
 		//! Copy operator; internally only increases reference count of the font resource
 		void operator = (const Font& other);
-		//! Creates font from TTF file; 'size' indicates font size in pixels @see enum Flags
+		//! Creates font from TTF file; 'size' indicates font size in pixels @see enum Flags; 'immediate' set to true indicates to load it synchronously
 		bool Create(const std::string& path, int size, unsigned int flags = 0, bool immediate = true);
 		//! Destroys the font
 		void Destroy();
-		//! Gets whether font is valid (successfully loaded)
-		bool IsValid() const;
 		//! Caches glyphs from given text, so that consecutive calls to Draw() are faster
 		void CacheGlyphs(const std::string& text);
 		//! Caches glyphs from given text file, so that consecutive calls to Draw() are faster
@@ -583,14 +594,14 @@ namespace Tiny2D
 		Sound(const Sound& other);
 		//! Destroys the sound
 		~Sound();
+		//! Gets resource state
+		ResourceState GetState() const;
 		//! Copy operator; internally creates new sound instance object (with its own state) and increases reference count of the sound resource
 		void operator = (const Sound& other);
-		//! Creates sound from a file; isMusic indicates whether this sound shall be played on the special music channel; immediate set to false indicates to load the it asynchronously
+		//! Creates sound from a file; isMusic indicates whether this sound shall be played on the special music channel; 'immediate' set to true indicates to load it synchronously
 		bool Create(const std::string& path, bool isMusic = false, bool immediate = true);
 		//! Destroys the sound (with optional sound fade out)
 		void Destroy(float fadeOutTime = 0.0f);
-		//! Gets whether sound is valid (has been successfully loaded)
-		bool IsValid() const;
 		//! Sets the volume of the sound; expects value within 0..1 range
 		void SetVolume(float volume);
 		//! Starts playing the sound
@@ -613,14 +624,14 @@ namespace Tiny2D
 		Effect(const Effect& other);
 		//! Destroys an effect immediately
 		~Effect();
+		//! Gets resource state
+		ResourceState GetState() const;
 		//! Copy operator; internally creates new effect instance object (with its own state) and increases reference count of the effect resource
 		void operator = (const Effect& other);
-		//! Create an effect at given position and with given rotation
+		//! Create an effect at given position and with given rotation; 'immediate' set to true indicates to load it synchronously
 		bool Create(const std::string& path, const Vec2& pos = Vec2(0.0f, 0.0f), float rotation = 0.0f, bool immediate = true);
 		//! Starts destruction of an effect; the effect will live until the last particle of it is alive; if an effect is endless it will be destroyed immediately
 		void Destroy();
-		//! Gets whether an effect is valid
-		bool IsValid() const;
 		//! Updates effect by given delta time
 		void Update(float deltaTime);
 		//! Draws an effect
@@ -1057,7 +1068,7 @@ namespace Tiny2D
 		//! Checks if "Screen Quake" postprocess is currently enabled
 		static bool		IsQuakeEnabled();
 		//! Toggles postprocess of "rainy glass" (rain drops falling down the glass window)
-		static void		EnableRainyGlass(bool enable = true, float spawnFrequency = 1.0f);
+		static void		EnableRainyGlass(bool enable = true, float spawnFrequency = 1.0f, float dropletSpeed = 0.5f, float dropletMinSize = 0.02f, float dropletMaxSize = 0.04f);
 		//! Checks if rainy glass postprocess is currently enabled
 		static bool		IsRainyGlassEnabled();
 	};

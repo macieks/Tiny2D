@@ -363,7 +363,12 @@ ShaderParameter* ShaderProgram_GetParameter(ShaderProgram* program, const std::s
 	return NULL;
 }
 
-// MaterialObj
+// Material
+
+ResourceState Material_GetState(MaterialObj* material)
+{
+	return material->resource->state;
+}
 
 int Material_AddParameter(MaterialResource* resource, ShaderParameter* shaderParameter)
 {
@@ -571,7 +576,7 @@ void Material_Destroy(MaterialObj* material)
 	Material_ReleaseTextures(material);
 	if (!Resource_DecRefCount(material->resource))
 	{
-		if (material->resource->state == ResourceState_CreationInProgress)
+		if (material->resource->state == ResourceState_Creating)
 		{
 			Log::Warn(string_format("Attempted to destroy the material %s that is still being loaded - waiting for all asynchronous jobs to complete", material->resource->name.c_str()));
 			Jobs::WaitForAllJobs();

@@ -21,7 +21,7 @@ bool Texture::Create(const std::string& path, bool immediate) { if (obj) Texture
 bool Texture::CreateRenderTarget(int width, int height) { if (obj) Texture_Destroy(obj); obj = Texture_CreateRenderTarget(width, height); return obj != NULL; }
 void Texture::Destroy() { if (obj) { Texture_Destroy(obj); obj = NULL; } }
 bool Texture::Save(const std::string& path, bool saveAlpha) { return obj && Texture_Save(obj, path, saveAlpha); }
-bool Texture::IsValid() const { return obj != NULL; }
+ResourceState Texture::GetState() const { return obj ? Texture_GetState(obj) : ResourceState_Uninitialized; }
 void Texture::Draw(const Shape::DrawParams* params, const Sampler& sampler) { if (obj) Texture_Draw(obj, params, sampler); }
 void Texture::Draw(const Vec2& position, float rotation, float scale, const Color& color) { if (obj) Texture_Draw(obj, position, rotation, scale, color); }
 int Texture::GetWidth() { return obj ? Texture_GetWidth(obj) : 0; }
@@ -39,7 +39,7 @@ Material::~Material() { Destroy(); }
 void Material::operator = (const Material& other) { Destroy(); obj = other.obj ? Material_Clone(const_cast<MaterialObj*>(other.obj)) : NULL; }
 bool Material::Create(const std::string& name, bool immediate) { if (obj) Material_Destroy(obj); obj = Material_Create(name, immediate); return obj != NULL; }
 void Material::Destroy() { if (obj) { Material_Destroy(obj); obj = NULL; } }
-bool Material::IsValid() const { return obj != NULL; }
+ResourceState Material::GetState() const { return obj ? Material_GetState(obj) : ResourceState_Uninitialized; }
 void Material::SetTechnique(const std::string& name) { if (obj) Material_SetTechnique(obj, name); }
 int Material::GetParameterIndex(const std::string& name) { return obj ? Material_GetParameterIndex(obj, name) : -1; }
 void Material::SetIntParameter(int index, const int* value, int count) { if (obj) Material_SetIntParameter(obj, index, value, count); }
@@ -66,7 +66,7 @@ void Font::operator = (const Font& other)
 }
 bool Font::Create(const std::string& path, int size, unsigned int flags, bool immediate) { if (obj) Font_Destroy(obj); obj = Font_Create(path, size, flags, immediate); return obj != NULL; }
 void Font::Destroy() { if (obj) { Font_Destroy(obj); obj = NULL; } }
-bool Font::IsValid() const { return obj != NULL; }
+ResourceState Font::GetState() const { return obj ? obj->state : ResourceState_Uninitialized; }
 void Font::CacheGlyphs(const std::string& text) { if (obj) Font_CacheGlyphs(obj, text); }
 void Font::CacheGlyphsFromFile(const std::string& path) { if (obj) Font_CacheGlyphsFromFile(obj, path); }
 void Font::Draw(const Text::DrawParams* params) { if (obj) Font_Draw(obj, params); }
@@ -79,7 +79,7 @@ Sprite::~Sprite() { Destroy(); }
 void Sprite::operator = (const Sprite& other) { Destroy(); obj = other.obj ? Sprite_Clone(const_cast<SpriteObj*>(other.obj)) : NULL; }
 bool Sprite::Create(const std::string& name, bool immediate) { if (obj) Sprite_Destroy(obj); obj = Sprite_Create(name, immediate); return obj != NULL; }
 void Sprite::Destroy() { if (obj) { Sprite_Destroy(obj); obj = NULL; } }
-bool Sprite::IsValid() const { return obj != NULL; }
+ResourceState Sprite::GetState() const { return obj ? obj->resource->state : ResourceState_Uninitialized; }
 void Sprite::SetEventCallback(Sprite::EventCallback callback, void* userData) { if (obj) Sprite_SetEventCallback(obj, callback, userData); }
 void Sprite::Update(float deltaTime) { if (obj) Sprite_Update(obj, deltaTime); }
 void Sprite::PlayAnimation(const std::string& name, AnimationMode mode, float transitionTime) { if (obj) Sprite_PlayAnimation(obj, name, mode, transitionTime); }
@@ -148,7 +148,7 @@ Sound::~Sound() { Destroy(); }
 void Sound::operator = (const Sound& other) { Destroy(); obj = other.obj ? Sound_Clone(const_cast<SoundObj*>(other.obj)) : NULL; }
 bool Sound::Create(const std::string& path, bool isMusic, bool immediate) { if (obj) Sound_Destroy(obj); obj = Sound_Create(path, isMusic, immediate); return obj != NULL; }
 void Sound::Destroy(float fadeOutTime) { if (obj) { Sound_Destroy(obj, fadeOutTime); obj = NULL; } }
-bool Sound::IsValid() const { return obj != NULL; }
+ResourceState Sound::GetState() const { return obj ? Sound_GetState(obj) : ResourceState_Uninitialized; }
 void Sound::SetVolume(float volume) { if (obj) Sound_SetVolume(obj, volume); }
 void Sound::Play(bool loop, float fadeInTime) { if (obj) Sound_Play(obj, loop, fadeInTime); }
 void Sound::Stop() { if (obj) Sound_Stop(obj); }
@@ -160,7 +160,7 @@ Effect::~Effect() { Destroy(); }
 void Effect::operator = (const Effect& other) { Destroy(); obj = other.obj ? Effect_Clone(const_cast<EffectObj*>(other.obj)) : NULL; }
 bool Effect::Create(const std::string& path, const Vec2& pos, float rotation, bool immediate) { if (obj) Effect_Destroy(obj); obj = Effect_Create(path, pos, rotation, immediate); return obj != NULL; }
 void Effect::Destroy() { if (obj) { Effect_Destroy(obj); obj = NULL; } }
-bool Effect::IsValid() const { return obj != NULL; }
+ResourceState Effect::GetState() const { return obj ? Effect_GetState(obj) : ResourceState_Uninitialized; }
 void Effect::Update(float deltaTime) { if (obj && !Effect_Update(obj, deltaTime)) obj = NULL; }
 void Effect::Draw() { if (obj) Effect_Draw(obj); }
 void Effect::SetPosition(const Vec2& pos) { if (obj) Effect_SetPosition(obj, pos); }

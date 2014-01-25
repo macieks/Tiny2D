@@ -329,6 +329,7 @@ namespace Tiny2D
 
 	bool			operator == (Texture& texture, const TextureObj* obj);
 	bool			operator != (Texture& texture, const TextureObj* obj);
+	ResourceState	Texture_GetState(TextureObj* texture);
 	void			Texture_SetHandle(TextureObj* obj, Texture& handle);
 	TextureObj*		Texture_Get(Texture& handle);
 	TextureObj*		Texture_Create(const std::string& name, bool immediate = true);
@@ -350,6 +351,7 @@ namespace Tiny2D
 	// Material
 
 	void			Material_SetHandle(MaterialObj* material, Material& handle);
+	ResourceState	Material_GetState(MaterialObj* material);
 	MaterialObj*	Material_Get(Material& handle);
 	MaterialObj*	Material_Create(const std::string& name, bool immediate = true);
 	MaterialObj*	Material_Clone(MaterialObj* material);
@@ -426,6 +428,7 @@ namespace Tiny2D
 	const char*		XMLAttribute_GetValue(const XMLAttribute* attr);
 
 	SoundObj*		Sound_Create(const std::string& path, bool isMusic = false, bool immediate = true);
+	ResourceState	Sound_GetState(SoundObj* sound);
 	SoundObj*		Sound_Clone(SoundObj* sound);
 	void			Sound_Destroy(SoundObj* sound, float fadeOutTime = 0.0f);
 	void			Sound_SetVolume(SoundObj* sound, float volume);
@@ -436,6 +439,7 @@ namespace Tiny2D
 
 	EffectObj*		Effect_Create(const std::string& path, const Vec2& pos, float rotation = 0.0f, float scale = 1.0f, bool immediate = true);
 	EffectObj*		Effect_Clone(EffectObj* effect);
+	ResourceState	Effect_GetState(EffectObj* effect);
 	void			Effect_Destroy(EffectObj* effect);
 	void			Effect_SetPosition(EffectObj* effect, const Vec2& pos);
 	void			Effect_SetRotation(EffectObj* effect, float rotation);
@@ -453,16 +457,6 @@ namespace Tiny2D
 
 	// Base resource
 
-	enum ResourceState
-	{
-		ResourceState_Initial = 0,
-		ResourceState_Created,
-		ResourceState_CreationInProgress,
-		ResourceState_FailedToCreate,
-
-		ResourceState_COUNT
-	};
-
 	struct Resource
 	{
 		const char* type;
@@ -474,7 +468,7 @@ namespace Tiny2D
 		Resource(const char* _type) :
 			type(_type),
 			refCount(0),
-			state(ResourceState_Initial),
+			state(ResourceState_Uninitialized),
 			jobID(0)
 		{}
 	};

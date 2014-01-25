@@ -8,11 +8,16 @@ extern GLuint g_fbo;
 float g_screenSizeMaterialParam[4];
 float g_projectionScaleMaterialParam[4];
 
+ResourceState Texture_GetState(TextureObj* texture)
+{
+	return texture->state;
+}
+
 void Texture_Destroy(TextureObj* texture)
 {
 	if (!Resource_DecRefCount(texture))
 	{
-		if (texture->state == ResourceState_CreationInProgress)
+		if (texture->state == ResourceState_Creating)
 			Jobs::CancelJob(texture->jobID);
 
 		if (texture == Texture_Get(App::GetMainRenderTarget()))
@@ -237,6 +242,7 @@ TextureObj* Texture_CreateRenderTarget(int width, int height)
 #endif
 
 	TextureObj* texture = new TextureObj();
+	texture->state = ResourceState_Created;
 	texture->width = width;
 	texture->height = height;
 	texture->format = format;
@@ -259,7 +265,7 @@ TextureObj* Texture_CreateRenderTarget(int width, int height)
 
 void Texture_BeginDrawing(TextureObj* texture, const Color* clearColor)
 {
-	if (App::GetCurrentRenderTarget().IsValid())
+	if (App::GetCurrentRenderTarget().GetState() == ResourceState_Created)
 	{
 		Log::Error("Failed to begin drawing to texture, reason: previous rendering wasn't finalized via Texture_EndDrawing");
 		return;

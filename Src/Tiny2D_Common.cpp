@@ -264,7 +264,7 @@ void App_Draw()
 
 	// Draw the scene
 
-	g_sceneRenderTarget = scene.IsValid() ? scene : g_mainRenderTarget;
+	g_sceneRenderTarget = scene.GetState() == ResourceState_Created ? scene : g_mainRenderTarget;
 	g_app->OnDraw(g_sceneRenderTarget);
 	g_sceneRenderTarget.Destroy();
 
