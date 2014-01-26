@@ -72,7 +72,7 @@ std::string string_format(const char* format, ...)
 	va_start(args, format);
 
 	char buffer[1 << 16];
-#if defined(UE_WIN32) || defined(UE_X360)
+#if defined(_MSC_VER)
 	_vsnprintf_s(buffer, ARRAYSIZE(buffer), ARRAYSIZE(buffer), format, args);
 #else
     vsnprintf(buffer, ARRAYSIZE(buffer), format, args);

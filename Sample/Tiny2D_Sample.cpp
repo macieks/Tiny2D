@@ -309,6 +309,10 @@ private:
 
 	void DrawScene(Texture& renderTarget)
 	{
+		std::vector<int> v;
+		for(int i = 0; i < 100; i++)
+			v.push_back(Random::GetInt());
+
 		// Begin drawing to render target and clear it
 
 		renderTarget.BeginDrawing(&Color::Black);

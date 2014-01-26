@@ -108,105 +108,13 @@ void Texture_Draw(TextureObj* texture, const Vec2& position, float rotation, flo
 
 void Texture_Draw(TextureObj* texture, const Shape::DrawParams* params, const Sampler& sampler)
 {
-#if 1
 	MaterialObj* material = Material_Get(App::GetDefaultMaterial());
 
 	Material_SetTechnique(material, "tex_col");
 	Material_SetTextureParameter(material, "ColorMap", texture, sampler);
 	Material_SetFloatParameter(material, "Color", (const float*) &params->color, 4);
 	Material_Draw(material, params);
-#else
-	glEnableTexture2D();
-	glBindTexture(GL_TEXTURE_2D, texture->handle);
-	Shape_SetBlending(texture->hasAlpha, params->blending);
-
-	glColor4fv((const GLfloat*) &params->color);
-	glBegin(Geometry::Type_ToOpenGL(params->primitiveType));
-	{
-		const float* xy = params->xy;
-		const float* uv = params->uv;
-		for (int i = 0; i < params->numVerts; i++, xy += 2, uv += 2)
-		{
-			glTexCoord2f(uv[0], uv[1]);
-			glVertex2f(xy[0], xy[1]);
-		}
-	}
-	glEnd();
-#endif
 }
-
-#if 0
-void Texture_DrawBlended(TextureObj* texture0, TextureObj* texture1, const ShapeDrawParams* params, float lerp)
-{
-	if (glActiveTexture && glMultiTexCoord2f)
-	{
-		Shape_SetBlending(texture0->hasAlpha, params->blending);
-
-		GL(glActiveTexture(GL_TEXTURE0));
-		GL(glBindTexture(GL_TEXTURE_2D, texture0->handle));
-		GL(glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE));
-
-		GL(glActiveTexture(GL_TEXTURE1));
-		glEnableTexture2D();
-		GL(glBindTexture(GL_TEXTURE_2D, texture1->handle));
-		GL(glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE));
-
-		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_INTERPOLATE);
-		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_PREVIOUS);
-		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_RGB, GL_TEXTURE);
-		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_RGB, GL_CONSTANT);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_RGB, GL_SRC_COLOR);
-
-		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_INTERPOLATE);
-		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_PREVIOUS);
-		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_TEXTURE);
-		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE2_ALPHA, GL_CONSTANT);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
-		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND2_ALPHA, GL_SRC_ALPHA);
-
-		const float lerpColor[4] = {1.0f - lerp, 1.0f - lerp, 1.0f - lerp, 1.0f - lerp};
-		glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, lerpColor);
-
-		glColor4fv((const GLfloat*) &params->color);
-		glBegin(Geometry::Type_ToOpenGL(params->primitiveType));
-		{
-			const float* xy = params->xy;
-			const float* uv0 = params->uv;
-			const float* uv1 = params->uvSecondary;
-			for (int i = 0; i < params->numVerts; i++, xy += 2, uv0 += 2, uv1 += 2)
-			{
-				glMultiTexCoord2f(GL_TEXTURE0, uv0[0], uv0[1]);
-				glMultiTexCoord2f(GL_TEXTURE1, uv1[0], uv1[1]);
-				glVertex2f(xy[0], xy[1]);
-			}
-		}
-		glEnd();
-
-		glDisableTexture2D();
-		glActiveTexture(GL_TEXTURE0);
-	}
-	else
-	{
-		ShapeDrawParams* p = const_cast<ShapeDrawParams*>(params);
-
-		const float originalAlpha = p->color.a;
-		const float* originalUV = p->uv;
-
-		p->color.a = originalAlpha * (1.0f - lerp);
-		Texture_Draw(texture0, params);
-
-		p->color.a = originalAlpha * lerp;
-		p->uv = p->uvSecondary;
-		Texture_Draw(texture1, params);
-
-		p->uv = originalUV;
-		p->color.a = originalAlpha;
-	}
-}
-#endif
 
 int Texture_GetWidth(TextureObj* texture)
 {
@@ -378,14 +286,6 @@ void Texture_BeginDrawing(TextureObj* texture, const Color* clearColor)
 	// Set up viewport
 
 	GL(glViewport(viewportLeft, viewportTop, viewportWidth, viewportHeight));
-#if 0
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-    glOrtho(0, (GLdouble) texture->width, (GLdouble) texture->height, 0, 1, -1);
-
-	glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-#endif
 
 	// Clear
 
