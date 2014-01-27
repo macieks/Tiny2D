@@ -795,7 +795,7 @@ EffectResource* EffectResource_Load(const std::string& name, bool immediate)
 {
 	const std::string path = name + ".effect.xml";
 
-	XMLDoc doc;
+	XMLDocument doc;
 	if (!doc.Load(path))
 	{
 		Log::Error(string_format("Failed to load particle effect XML from %s", path.c_str()));

@@ -18,7 +18,7 @@ void Texture_Destroy(TextureObj* texture)
 	if (!Resource_DecRefCount(texture))
 	{
 		if (texture->state == ResourceState_Creating)
-			Jobs::CancelJob(texture->jobID);
+			JobSystem::CancelJob(texture->jobID);
 
 		if (texture == Texture_Get(App::GetMainRenderTarget()))
 		{

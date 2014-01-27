@@ -42,9 +42,6 @@ namespace Tiny2D
 		#define ENABLE_LOGGING
 	#endif
 
-	//! String formatting helper function
-	std::string string_format(const char* format, ...);
-
 	// Forward declarations of internal object types
 	struct TextureObj;
 	struct EffectObj;
@@ -53,7 +50,7 @@ namespace Tiny2D
 	struct MaterialObj;
 	struct SpriteObj;
 	struct FileObj;
-	struct XMLDocObj;
+	struct XMLDocumentObj;
 
 	//! Color with RGBA components
 	struct Color

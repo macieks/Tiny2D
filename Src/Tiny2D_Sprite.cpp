@@ -103,7 +103,7 @@ bool Sprite_LoadAtlasInfo(const std::string& atlasName, AtlasInfo& atlasInfo)
 
 	const std::string path = atlasName.substr(0, dotIndex) + ".xml";
 
-	XMLDoc doc;
+	XMLDocument doc;
 	if (!doc.Load(path))
 	{
 		Log::Error("Sprite atlas info not found under " + path);
@@ -179,7 +179,7 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 	{
 		const std::string path = name + ".sprite.xml";
 
-		XMLDoc doc;
+		XMLDocument doc;
 		if (!doc.Load(path))
 		{
 			Log::Error("Failed to load sprite resource from " + path);

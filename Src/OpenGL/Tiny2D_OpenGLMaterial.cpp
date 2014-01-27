@@ -509,7 +509,7 @@ MaterialObj* Material_Create(const std::string& name, bool immediate)
 	{
 		const std::string path = name + ".material.xml";
 
-		XMLDoc doc;
+		XMLDocument doc;
 		if (!doc.Load(path))
 		{
 			Log::Error(string_format("Failed to load material from %s", path.c_str()));
@@ -579,7 +579,7 @@ void Material_Destroy(MaterialObj* material)
 		if (material->resource->state == ResourceState_Creating)
 		{
 			Log::Warn(string_format("Attempted to destroy the material %s that is still being loaded - waiting for all asynchronous jobs to complete", material->resource->name.c_str()));
-			Jobs::WaitForAllJobs();
+			JobSystem::WaitForAllJobs();
 		}
 
 		Material_ReleaseTextures(material->resource);

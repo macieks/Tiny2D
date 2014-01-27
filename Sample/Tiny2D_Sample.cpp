@@ -89,7 +89,7 @@ public:
 
 			case State_Loading:
 				cogWheelRotation += deltaTime;
-				if (Jobs::GetNumJobsInProgress() == 0 && Time::SecondsSince(startTicks) > 1.0f)
+				if (JobSystem::GetNumJobsInProgress() == 0 && Time::SecondsSince(startTicks) > 1.0f)
 					state = State_Loaded;
 				break;
 
@@ -309,10 +309,6 @@ private:
 
 	void DrawScene(Texture& renderTarget)
 	{
-		std::vector<int> v;
-		for(int i = 0; i < 100; i++)
-			v.push_back(Random::GetInt());
-
 		// Begin drawing to render target and clear it
 
 		renderTarget.BeginDrawing(&Color::Black);
@@ -495,4 +491,4 @@ private:
 	Font font;
 };
 
-DEFINE_APP(SampleApp);
+TINY2D_DEFINE_APP(SampleApp);

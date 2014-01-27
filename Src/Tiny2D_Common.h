@@ -57,6 +57,8 @@ namespace Tiny2D
 		return value < minValue ? minValue : (value > maxValue ? maxValue : value);
 	}
 
+	std::string string_format(const char* format, ...);
+
 	inline std::string string_from_bool(bool value)
 	{
 		return value ? "true" : "false";
@@ -398,11 +400,11 @@ namespace Tiny2D
 	bool			File_Load(const std::string& path, void*& dst, int& size);
 	SDL_RWops*		File_OpenSDLFileRW(const std::string& path, File::OpenMode openMode);
 
-	XMLDocObj*		XMLDoc_Load(const std::string& path);
-	XMLDocObj*		XMLDoc_Create(const std::string& version = "1.0", const std::string& encoding = "utf-8");
-	bool			XMLDoc_Save(XMLDocObj* doc, const std::string& path);
-	void			XMLDoc_Destroy(XMLDocObj* doc);
-	XMLNode*		XMLDoc_AsNode(XMLDocObj* doc);
+	XMLDocumentObj*		XMLDocument_Load(const std::string& path);
+	XMLDocumentObj*		XMLDocument_Create(const std::string& version = "1.0", const std::string& encoding = "utf-8");
+	bool			XMLDocument_Save(XMLDocumentObj* doc, const std::string& path);
+	void			XMLDocument_Destroy(XMLDocumentObj* doc);
+	XMLNode*		XMLDocument_AsNode(XMLDocumentObj* doc);
 	XMLNode*		XMLNode_GetNext(XMLNode* node, const char* name = NULL);
 	const char*		XMLNode_GetName(const XMLNode* node);
 	const char*		XMLNode_GetValue(const XMLNode* node);
@@ -463,7 +465,7 @@ namespace Tiny2D
 		std::string name;
 		int refCount;
 		ResourceState state;
-		Jobs::JobID jobID;
+		JobSystem::JobID jobID;
 
 		Resource(const char* _type) :
 			type(_type),

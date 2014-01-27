@@ -208,7 +208,7 @@ void App_UpdateFPS()
 void App_Update()
 {
 	const float jobUpdateTime = min(1.0f / 120.0f, 1.0f / 60.0f - g_deltaTime);
-	Jobs::UpdateDoneJobs(jobUpdateTime);
+	JobSystem::UpdateDoneJobs(jobUpdateTime);
 
 	g_app->OnUpdate(g_deltaTime);
 
@@ -445,11 +445,11 @@ const std::string& App::GetLanguageSymbol()
 	return g_languageSymbol;
 }
 
-void Jobs::WaitForAllJobs()
+void JobSystem::WaitForAllJobs()
 {
 	while (GetNumJobsInProgress())
 	{
-		Jobs::UpdateDoneJobs(1.0f);
+		JobSystem::UpdateDoneJobs(1.0f);
 		App::Sleep(0.1f);
 	}
 }

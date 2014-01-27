@@ -1009,7 +1009,7 @@ TextureObj* Texture_Create(const std::string& name, bool immediate)
 
 		TextureJobData* jobData = new TextureJobData();
 		jobData->resource = resource;
-		resource->jobID = Jobs::RunJob(Texture_JobFunc, Texture_DoneFunc, jobData);
+		resource->jobID = JobSystem::RunJob(Texture_JobFunc, Texture_DoneFunc, jobData);
 	}
 
 	return resource;
@@ -1220,7 +1220,7 @@ SoundObj* Sound_Create(const std::string& name, bool isMusic, bool immediate)
 			jobData->resource = resource;
 			jobData->isMusic = isMusic;
 
-			resource->jobID = Jobs::RunJob(SoundResource_JobFunc, SoundResource_DoneFunc, jobData);
+			resource->jobID = JobSystem::RunJob(SoundResource_JobFunc, SoundResource_DoneFunc, jobData);
 		}
 	}
 
@@ -1251,7 +1251,7 @@ void Sound_Destroy(SoundObj* sound, float fadeOutTime)
 	if (!Resource_DecRefCount(sound->resource))
 	{
 		if (sound->resource->state == ResourceState_Creating)
-			Jobs::CancelJob(sound->resource->jobID);
+			JobSystem::CancelJob(sound->resource->jobID);
 
 		if (sound->resource->chunk)
 		{
@@ -1585,13 +1585,13 @@ void Font_CalculateSize(FontObj* font, const Text::DrawParams* params, float& wi
 	height = (float) heightInt;
 }
 
-// Asynchronous stuff
+// Asynchronous job system
 
 struct Job
 {
-	Jobs::JobID id;
-	Jobs::JobFunc jobFunc;
-	Jobs::DoneFunc doneFunc;
+	JobSystem::JobID id;
+	JobSystem::JobFunc jobFunc;
+	JobSystem::DoneFunc doneFunc;
 	void* userData;
 };
 
@@ -1601,7 +1601,7 @@ SDL_Thread* thread = NULL;
 std::list<Job> jobs;
 std::list<Job> doneJobs;
 volatile int numJobs = 0;
-volatile Jobs::JobID currentJobID = 0;
+volatile JobSystem::JobID currentJobID = 0;
 
 int Jobs_MainFunc(void*)
 {
@@ -1654,7 +1654,7 @@ void Jobs_Deinit()
 	jobMutex = NULL;
 }
 
-void Jobs::UpdateDoneJobs(float maxTime)
+void JobSystem::UpdateDoneJobs(float maxTime)
 {
 	const Time::Ticks maxTicks = Time::SecondsToTicks(maxTime);
 	const Time::Ticks startTicks = Time::GetTicks();
@@ -1680,7 +1680,7 @@ void Jobs::UpdateDoneJobs(float maxTime)
 	}
 }
 
-bool Jobs_IsJobWaiting(Jobs::JobID id)
+bool Jobs_IsJobWaiting(JobSystem::JobID id)
 {
 	SDL_LockMutex(jobMutex);
 	if (currentJobID == id)
@@ -1698,7 +1698,7 @@ bool Jobs_IsJobWaiting(Jobs::JobID id)
 	return false;
 }
 
-void Jobs::WaitForJob(JobID id)
+void JobSystem::WaitForJob(JobID id)
 {
 	while (Jobs_IsJobWaiting(id))
 		App::Sleep(0.1f);
@@ -1717,13 +1717,13 @@ void Jobs::WaitForJob(JobID id)
 	SDL_UnlockMutex(jobMutex);
 }
 
-void Jobs::CancelJob(JobID id)
+void JobSystem::CancelJob(JobID id)
 {
 	SDL_LockMutex(jobMutex);
 	if (currentJobID == id)
 	{
 		SDL_UnlockMutex(jobMutex);
-		Jobs::WaitForJob(id);
+		JobSystem::WaitForJob(id);
 		return;
 	}
 	for (std::list<Job>::iterator it = jobs.begin(); it != jobs.end(); ++it)
@@ -1750,18 +1750,18 @@ void Jobs::CancelJob(JobID id)
 	SDL_UnlockMutex(jobMutex);
 }
 
-int Jobs::GetNumJobsInProgress()
+int JobSystem::GetNumJobsInProgress()
 {
 	return numJobs;
 }
 
-Jobs::JobID Jobs_GenerateNewJobID()
+JobSystem::JobID Jobs_GenerateNewJobID()
 {
-	static Jobs::JobID id = 1;
+	static JobSystem::JobID id = 1;
 	return ++id;
 }
 
-Jobs::JobID Jobs::RunJob(Jobs::JobFunc jobFunc, Jobs::DoneFunc doneFunc, void* userData)
+JobSystem::JobID JobSystem::RunJob(JobSystem::JobFunc jobFunc, JobSystem::DoneFunc doneFunc, void* userData)
 {
 	Job job;
 	job.jobFunc = jobFunc;
