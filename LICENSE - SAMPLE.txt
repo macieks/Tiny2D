@@ -1,6 +1,0 @@
-Tiny2D Library (version 1.1)
-Copyright (C) 2014 Maciej Sawitus <contact@pixelelephant.com>
-
-Tiny2D sample application data is owned by Pixel Elephant and can not be
-used by anyone in commercial games or applications. This data includes
-all files under Sample/Data/ and Data/ directories.
