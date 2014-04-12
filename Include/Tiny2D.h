@@ -683,7 +683,7 @@ namespace Tiny2D
 			std::vector<std::string> rootDataDirs;		//!< Root data directories containing all app data files listed in order from the highest to lowest priority; defaults to different paths depending on platform so as to include both common and app data
 			std::string languageSymbol;		//!< Language symbol (used for text localization); defaults to "EN"
 			std::string defaultMaterialName;//!< Name of the default material to be loaded at app startup; defaults to "common/default"
-			std::string defaultFontName;	//!< Name of the default font to be loaded at app startup; defaults to "common/courbd.ttf"
+			std::string defaultFontName;	//!< Name of the default font to be loaded at app startup; defaults to "common/jackinput.ttf"
 			int defaultFontSize;			//!< Default font size; defaults to 16
 			std::string defaultCursorName;	//!< Default cursor texture (or sprite) name; defaults to "common/cursor.png"
 			bool showMessageBoxOnWarning;	//!< Show message box on every warning?; defaults to false

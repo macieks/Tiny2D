@@ -168,7 +168,7 @@ App::StartupParams::StartupParams() :
 	name("Tiny2D App"),
 	languageSymbol("EN"),
 	defaultMaterialName("common/default"),
-	defaultFontName("common/courbd.ttf"),
+	defaultFontName("common/jackinput.ttf"),
 	defaultFontSize(16),
 	defaultCursorName("common/cursor.png"),
 	showMessageBoxOnWarning(false),

@@ -33,7 +33,7 @@ public:
 		cogWheel.Create("CogWheel.png");
 		cogWheelRotation = 0.0f;
 
-		font.Create("common/courbd.ttf", 28, Font::Flags_Italic, false);
+		font.Create("common/jackinput.ttf", 28, Font::Flags_Italic, false);
 
 		// Load (asynchronously) remaining data and initialize it
 
