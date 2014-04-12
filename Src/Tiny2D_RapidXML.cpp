@@ -1,6 +1,10 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
+#ifdef __LINUX__
+#include <stdint.h>
+#endif
+
 namespace Tiny2D
 {
 
@@ -548,7 +552,7 @@ namespace rapidxml
 
         char *align(char *ptr)
         {
-            int alignment = ((RAPIDXML_ALIGNMENT - (int(ptr) & (RAPIDXML_ALIGNMENT - 1))) & (RAPIDXML_ALIGNMENT - 1));
+            intptr_t alignment = ((RAPIDXML_ALIGNMENT - (intptr_t(ptr) & (RAPIDXML_ALIGNMENT - 1))) & (RAPIDXML_ALIGNMENT - 1));
             return ptr + alignment;
         }
 

@@ -2,12 +2,16 @@
 
 #include <list>
 
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_mixer.h"
-#include "SDL_ttf.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_mixer.h>
+#include <SDL_ttf.h>
+#include <SDL_rwops.h>
 
-#include "stb_vorbis.h"
+#include <stb_vorbis.h>
+
+#include <cstdlib>
+#include <csignal>
 
 #ifndef OPENGL_ES
 	#define GL_PROC(type, func) type func = NULL;
@@ -516,7 +520,11 @@ void App::RunCommand(const std::string& command)
 #if defined(__WIN32__) || defined(__WIN64__)
 	ShellExecuteA(NULL, "open", command.c_str(), NULL, NULL, SW_SHOWNORMAL);
 #elif defined(__MACOSX__) || defined(__LINUX__)
-	system(command.c_str());
+	int ret = system(command.c_str());
+	if (WIFSIGNALED(ret) && (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT))
+	{
+		/* SIGINT or SIGQUIT triggered */
+	}
 #else
 	Log::Warn("App::RunCommand() not implemented on current platform");
 #endif
@@ -1778,8 +1786,6 @@ JobSystem::JobID JobSystem::RunJob(JobSystem::JobFunc jobFunc, JobSystem::DoneFu
 }
 
 // File
-
-#include "SDL_rwops.h"
 
 FileObj* File_Open(const std::string& name, File::OpenMode openMode)
 {

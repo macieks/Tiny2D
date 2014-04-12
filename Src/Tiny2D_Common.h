@@ -7,6 +7,8 @@
 #if defined(WIN32)
 	#include <shlwapi.h>
 #endif
+#include <cstring>
+#include <cstdarg>
 
 #ifndef _MSC_VER
     #include <stdlib.h>

@@ -1,4 +1,3 @@
-#include "Tiny2D.h"
 #include "Tiny2D_OpenGL.h"
 
 namespace Tiny2D
