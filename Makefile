@@ -2,7 +2,7 @@ LIBRARY=libTiny2D
 
 all: $(LIBRARY).a $(LIBRARY).so
 
-MAJOR=0d1
+MAJOR=0
 MINOR=0
 
 SOURCES = \
