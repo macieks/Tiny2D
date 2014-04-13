@@ -8,7 +8,7 @@
 #include <SDL_ttf.h>
 #include <SDL_rwops.h>
 
-#include <stb_vorbis.h>
+#include <OGGVorbis\stb_vorbis.h>
 
 #include <cstdlib>
 #include <csignal>
