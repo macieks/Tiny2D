@@ -103,7 +103,7 @@ bool Sprite_LoadAtlasInfo(const std::string& atlasName, AtlasInfo& atlasInfo)
 
 	const std::string path = atlasName.substr(0, dotIndex) + ".xml";
 
-	XMLDocument doc;
+	XMLDoc doc;
 	if (!doc.Load(path))
 	{
 		Log::Error("Sprite atlas info not found under " + path);
@@ -143,7 +143,7 @@ bool Sprite_LoadAtlasInfo(const std::string& atlasName, AtlasInfo& atlasInfo)
 		}
 
 		Rect rect;
-		if (sscanf(value, "%f %f %f %f", &rect.left, &rect.top, &rect.width, &rect.height) != 4)
+		if (sscanf_s(value, "%f %f %f %f", &rect.left, &rect.top, &rect.width, &rect.height) != 4)
 		{
 			Log::Error("Failed to load sprite atlas info from " + path + ", reason: 'Value' couldn't be parsed into 4 numbers (left, top, width, height).");
 			return false;
@@ -179,7 +179,7 @@ SpriteObj* Sprite_Create(const std::string& name, bool immediate)
 	{
 		const std::string path = name + ".sprite.xml";
 
-		XMLDocument doc;
+		XMLDoc doc;
 		if (!doc.Load(path))
 		{
 			Log::Error("Failed to load sprite resource from " + path);

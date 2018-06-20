@@ -145,7 +145,7 @@ inline float Lerp(float a, float b, float scale)
 
 inline bool FromString(const char* s, float& result)
 {
-	return s && sscanf(s, "%f", &result) == 1;
+	return s && sscanf_s(s, "%f", &result) == 1;
 }
 
 inline Vec2 Lerp(const Vec2& a, const Vec2& b, const float scale)
@@ -162,7 +162,7 @@ inline bool FromString(const char* s, Vec2& result)
 {
 	if (!s)
 		return false;
-	const int numScanned = sscanf(s, "%f %f", &result.x, &result.y);
+	const int numScanned = sscanf_s(s, "%f %f", &result.x, &result.y);
 	switch (numScanned)
 	{
 		case 0: return false;
@@ -180,7 +180,7 @@ inline bool FromString(const char* s, Color& result)
 {
 	if (!s)
 		return false;
-	const int numScanned = sscanf(s, "%f %f %f %f", &result.r, &result.g, &result.b, &result.a);
+	const int numScanned = sscanf_s(s, "%f %f %f %f", &result.r, &result.g, &result.b, &result.a);
 	switch (numScanned)
 	{
 		case 0: return false;
@@ -795,7 +795,7 @@ EffectResource* EffectResource_Load(const std::string& name, bool immediate)
 {
 	const std::string path = name + ".effect.xml";
 
-	XMLDocument doc;
+	XMLDoc doc;
 	if (!doc.Load(path))
 	{
 		Log::Error(string_format("Failed to load particle effect XML from %s", path.c_str()));

@@ -1,6 +1,13 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
+FILE _iob[] = {*stdin, *stdout, *stderr};
+
+extern "C" FILE * __cdecl __iob_func(void)
+{
+    return _iob;
+}
+
 Tiny2D::App::Callbacks* (*g_createAppCallbacksFunc)() = NULL;
 
 void SetCreateTiny2DAppCallbacks(Tiny2D::App::Callbacks* (*func)())
@@ -168,7 +175,7 @@ App::StartupParams::StartupParams() :
 	name("Tiny2D App"),
 	languageSymbol("EN"),
 	defaultMaterialName("common/default"),
-	defaultFontName("common/jackinput.ttf"),
+	defaultFontName("common/courbd.ttf"),
 	defaultFontSize(16),
 	defaultCursorName("common/cursor.png"),
 	showMessageBoxOnWarning(false),
@@ -208,7 +215,7 @@ void App_UpdateFPS()
 void App_Update()
 {
 	const float jobUpdateTime = min(1.0f / 120.0f, 1.0f / 60.0f - g_deltaTime);
-	JobSystem::UpdateDoneJobs(jobUpdateTime);
+	Jobs::UpdateDoneJobs(jobUpdateTime);
 
 	g_app->OnUpdate(g_deltaTime);
 
@@ -445,11 +452,11 @@ const std::string& App::GetLanguageSymbol()
 	return g_languageSymbol;
 }
 
-void JobSystem::WaitForAllJobs()
+void Jobs::WaitForAllJobs()
 {
 	while (GetNumJobsInProgress())
 	{
-		JobSystem::UpdateDoneJobs(1.0f);
+		Jobs::UpdateDoneJobs(1.0f);
 		App::Sleep(0.1f);
 	}
 }

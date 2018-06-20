@@ -18,7 +18,7 @@ void Texture_Destroy(TextureObj* texture)
 	if (!Resource_DecRefCount(texture))
 	{
 		if (texture->state == ResourceState_Creating)
-			JobSystem::CancelJob(texture->jobID);
+			Jobs::CancelJob(texture->jobID);
 
 		if (texture == Texture_Get(App::GetMainRenderTarget()))
 		{
@@ -378,9 +378,7 @@ void CheckOpenGLErrors(const char* operation, const char* file, unsigned int lin
 		CASE(GL_INVALID_VALUE)
 		CASE(GL_INVALID_OPERATION)
 		CASE(GL_OUT_OF_MEMORY)
-#ifndef __LINUX__
 		CASE(GL_INVALID_FRAMEBUFFER_OPERATION)
-#endif
 #ifndef OPENGL_ES
 		CASE(GL_STACK_OVERFLOW)
 		CASE(GL_STACK_UNDERFLOW)

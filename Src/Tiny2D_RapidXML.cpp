@@ -1,10 +1,6 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
-#ifdef __LINUX__
-#include <stdint.h>
-#endif
-
 namespace Tiny2D
 {
 
@@ -202,7 +198,7 @@ namespace rapidxml
     //! See xml_document::parse() function.
     const int parse_no_utf8 = 0x10;
 
-    //! Parse flag instructing the parser to create XMLDocumentObj declaration node.
+    //! Parse flag instructing the parser to create XMLDocObj declaration node.
     //! By default, declaration node is not created.
     //! Can be combined with other flags by use of | operator.
     //! <br><br>
@@ -552,7 +548,7 @@ namespace rapidxml
 
         char *align(char *ptr)
         {
-            intptr_t alignment = ((RAPIDXML_ALIGNMENT - (intptr_t(ptr) & (RAPIDXML_ALIGNMENT - 1))) & (RAPIDXML_ALIGNMENT - 1));
+            int alignment = ((RAPIDXML_ALIGNMENT - (int(ptr) & (RAPIDXML_ALIGNMENT - 1))) & (RAPIDXML_ALIGNMENT - 1));
             return ptr + alignment;
         }
 
@@ -604,7 +600,7 @@ namespace rapidxml
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    // XMLDocumentObj base
+    // XMLDocObj base
 
     //! Base class for xml_node and xml_attribute implementing common functions:
     //! name(), name_size(), value(), value_size() and parent().
@@ -754,7 +750,7 @@ namespace rapidxml
 
     };
 
-    //! Class representing attribute node of XMLDocumentObj document.
+    //! Class representing attribute node of XMLDocObj document.
     //! Each attribute has name and value strings, which are available through name() and value() functions (inherited from xml_base).
     //! Note that after parse, both name and value of attribute will point to interior of source text used for parsing.
     //! Thus, this text must persist in memory for the lifetime of attribute.
@@ -841,9 +837,9 @@ namespace rapidxml
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    // XMLDocumentObj node
+    // XMLDocObj node
 
-    //! Class representing a node of XMLDocumentObj document.
+    //! Class representing a node of XMLDocObj document.
     //! Each node may have associated name and value strings, which are available through name() and value() functions.
     //! Interpretation of name and value depends on type of the node.
     //! Type of node can be determined by using type() function.
@@ -1310,11 +1306,11 @@ namespace rapidxml
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    // XMLDocumentObj document
+    // XMLDocObj document
 
     //! This class represents root of the DOM hierarchy.
     //! It is also an xml_node and a memory_pool through public inheritance.
-    //! Use parse() function to build a DOM tree from a zero-terminated XMLDocumentObj text string.
+    //! Use parse() function to build a DOM tree from a zero-terminated XMLDocObj text string.
     //! parse() function allocates memory for nodes and attributes by using functions of xml_document,
     //! which are inherited from memory_pool.
     //! To access root node of the document, use the document itself, as if it was an xml_node.
@@ -1325,7 +1321,7 @@ namespace rapidxml
 
     public:
 
-        //! Constructs empty XMLDocumentObj document
+        //! Constructs empty XMLDocObj document
         xml_document()
             : xml_node<Ch>(node_document),
 			m_user_data(NULL)
@@ -1338,7 +1334,7 @@ namespace rapidxml
 		void* m_user_data;
 	public:
 
-        //! Parses zero-terminated XMLDocumentObj string according to given flags.
+        //! Parses zero-terminated XMLDocObj string according to given flags.
         //! Passed string will be modified by the parser, unless rapidxml::parse_non_destructive flag is used.
         //! The string must persist for the lifetime of the document.
         //! In case of error, rapidxml::parse_error exception will be thrown.
@@ -1348,7 +1344,7 @@ namespace rapidxml
         //! <br><br>
         //! Document can be parsed into multiple times.
         //! Each new call to parse removes previous nodes and attributes (if any), but does not clear memory pool.
-        //! \param text XMLDocumentObj data to parse; pointer is non-const to denote fact that this data may be modified by the parser.
+        //! \param text XMLDocObj data to parse; pointer is non-const to denote fact that this data may be modified by the parser.
         template<int Flags>
         void parse(Ch *text)
         {
@@ -1536,7 +1532,7 @@ namespace rapidxml
         }
 
         // Skip characters until predicate evaluates to true while doing the following:
-        // - replacing XMLDocumentObj character entity references with proper characters (&apos; &amp; &quot; &lt; &gt; &#...;)
+        // - replacing XMLDocObj character entity references with proper characters (&apos; &amp; &quot; &lt; &gt; &#...;)
         // - condensing whitespace sequences to single space character
         template<class StopPred, class StopPredPure, int Flags>
         static Ch *skip_and_expand_character_refs(Ch *&text)
@@ -1705,7 +1701,7 @@ namespace rapidxml
             }
         }
 
-        // Parse XMLDocumentObj declaration (<?xml...)
+        // Parse XMLDocObj declaration (<?xml...)
         template<int Flags>
         xml_node<Ch> *parse_xml_declaration(Ch *&text)
         {
@@ -1740,7 +1736,7 @@ namespace rapidxml
             return declaration;
         }
 
-        // Parse XMLDocumentObj comment (<!--...)
+        // Parse XMLDocObj comment (<!--...)
         template<int Flags>
         xml_node<Ch> *parse_comment(Ch *&text)
         {
@@ -2204,7 +2200,7 @@ namespace rapidxml
             }
         }
 
-        // Parse XMLDocumentObj attributes of the node
+        // Parse XMLDocObj attributes of the node
         template<int Flags>
         void parse_node_attributes(Ch *&text, xml_node<Ch> *node)
         {
@@ -2583,14 +2579,14 @@ namespace rapidxml
 	}
 }
 
-void XMLDocument_Destroy(XMLDocumentObj* _doc)
+void XMLDoc_Destroy(XMLDocObj* _doc)
 {
 	xml_document<>* doc = (xml_document<>*) _doc;
 	free(doc->get_user_data());
 	delete doc;
 }
 
-XMLDocumentObj* XMLDocument_Create(const std::string& version, const std::string& encoding)
+XMLDocObj* XMLDoc_Create(const std::string& version, const std::string& encoding)
 {
 	xml_document<>* doc = new xml_document<>();
 	if (!doc)
@@ -2601,7 +2597,7 @@ XMLDocumentObj* XMLDocument_Create(const std::string& version, const std::string
 	XMLNode_AddAttribute((XMLNode*) decl, "version", version.c_str());
 	XMLNode_AddAttribute((XMLNode*) decl, "encoding", encoding.c_str());
 
-	return (XMLDocumentObj*) doc;
+	return (XMLDocObj*) doc;
 }
 
 void XML_WriteFileString(const char* s, std::string& output)
@@ -2675,7 +2671,7 @@ void XMLNode_ToString(xml_node<>* node, std::string& output, int level)
 		XMLNode_ToString(node->next_sibling(), output, level);
 }
 
-bool XMLDocument_Save(XMLDocumentObj* _doc, const std::string& path)
+bool XMLDoc_Save(XMLDocObj* _doc, const std::string& path)
 {
 	File file;
 	if (!file.Open(path, File::OpenMode_Write))
@@ -2687,7 +2683,7 @@ bool XMLDocument_Save(XMLDocumentObj* _doc, const std::string& path)
 	return file.Write(output.c_str(), output.length() + 1) == 1;
 }
 
-XMLDocumentObj* XMLDocument_LoadFromString(char* text)
+XMLDocObj* XMLDoc_LoadFromString(char* text)
 {
 	xml_document<>* doc = new xml_document<>();
 	if (!doc)
@@ -2698,14 +2694,14 @@ XMLDocumentObj* XMLDocument_LoadFromString(char* text)
 
 	if (s_isError)
 	{
-		XMLDocument_Destroy((XMLDocumentObj*) doc);
+		XMLDoc_Destroy((XMLDocObj*) doc);
 		return NULL;
 	}
 
-	return (XMLDocumentObj*) doc;
+	return (XMLDocObj*) doc;
 }
 
-XMLDocumentObj* XMLDocument_Load(const std::string& path)
+XMLDocObj* XMLDoc_Load(const std::string& path)
 {
 	int size = 0;
 	void* data = NULL;
@@ -2715,10 +2711,10 @@ XMLDocumentObj* XMLDocument_Load(const std::string& path)
 		return NULL;
 	}
 
-	return XMLDocument_LoadFromString((char*) data);
+	return XMLDoc_LoadFromString((char*) data);
 }
 
-XMLNode* XMLDocument_AsNode(XMLDocumentObj* doc)
+XMLNode* XMLDoc_AsNode(XMLDocObj* doc)
 {
 	return (XMLNode*) (xml_document<>*) doc;
 }

@@ -1,8 +1,7 @@
 #include "Tiny2D.h"
 #include "Tiny2D_Common.h"
 
-namespace Tiny2D
-{
+using namespace Tiny2D;
 
 Texture::Texture() : obj(NULL) {}
 Texture::Texture(const Texture& other) : obj(NULL) { *this = other; }
@@ -102,15 +101,15 @@ bool File::Write(const void* src, int size) { return file ? File_Write(file, src
 File::File(const File&) {}
 void File::operator = (const File&) {}
 
-XMLDocument::XMLDocument() : doc(NULL) {}
-XMLDocument::~XMLDocument() { Destroy(); }
-bool XMLDocument::Load(const std::string& path) { if (doc) XMLDocument_Destroy(doc); doc = XMLDocument_Load(path); return doc != NULL; }
-bool XMLDocument::Create(const std::string& version, const std::string& encoding) { if (doc) XMLDocument_Destroy(doc); doc = XMLDocument_Create(version, encoding); return doc != NULL; }
-bool XMLDocument::Save(const std::string& path) { return doc ? XMLDocument_Save(doc, path) : false; }
-void XMLDocument::Destroy() { if (doc) { XMLDocument_Destroy(doc); doc = NULL; } }
-XMLNode* XMLDocument::AsNode() { return doc ? XMLDocument_AsNode(doc) : NULL; }
-XMLDocument::XMLDocument(XMLDocument&) {}
-void XMLDocument::operator = (XMLDocument&) {}
+XMLDoc::XMLDoc() : doc(NULL) {}
+XMLDoc::~XMLDoc() { Destroy(); }
+bool XMLDoc::Load(const std::string& path) { if (doc) XMLDoc_Destroy(doc); doc = XMLDoc_Load(path); return doc != NULL; }
+bool XMLDoc::Create(const std::string& version, const std::string& encoding) { if (doc) XMLDoc_Destroy(doc); doc = XMLDoc_Create(version, encoding); return doc != NULL; }
+bool XMLDoc::Save(const std::string& path) { return doc ? XMLDoc_Save(doc, path) : false; }
+void XMLDoc::Destroy() { if (doc) { XMLDoc_Destroy(doc); doc = NULL; } }
+XMLNode* XMLDoc::AsNode() { return doc ? XMLDoc_AsNode(doc) : NULL; }
+XMLDoc::XMLDoc(XMLDoc&) {}
+void XMLDoc::operator = (XMLDoc&) {}
 
 XMLNode* XMLNode::GetNext(const char* name) { return XMLNode_GetNext(this, name); }
 const char* XMLNode::GetName() const { return XMLNode_GetName(this); }
@@ -168,5 +167,3 @@ void Effect::SetPosition(const Vec2& pos) { if (obj) Effect_SetPosition(obj, pos
 void Effect::SetRotation(float rotation) { if (obj) Effect_SetRotation(obj, rotation); }
 void Effect::SetScale(float scale) { if (obj) Effect_SetScale(obj, scale); }
 void Effect::SetSpawnCountMultiplier(float multiplier) { if (obj) Effect_SetSpawnCountMultiplier(obj, multiplier); }
-
-};

@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tiny2D", "Tiny2D.vcxproj", "{6413B300-0A6F-4A11-A78A-B1CDDA9F1119}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		DebugGLES|Win32 = DebugGLES|Win32
+		Release|Win32 = Release|Win32
+		ReleaseGLES|Win32 = ReleaseGLES|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6413B300-0A6F-4A11-A78A-B1CDDA9F1119}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6413B300-0A6F-4A11-A78A-B1CDDA9F1119}.Debug|Win32.Build.0 = Debug|Win32
+		{6413B300-0A6F-4A11-A78A-B1CDDA9F1119}.DebugGLES|Win32.ActiveCfg = DebugGLES|Win32
+		{6413B300-0A6F-4A11-A78A-B1CDDA9F1119}.DebugGLES|Win32.Build.0 = DebugGLES|Win32
+		{6413B300-0A6F-4A11-A78A-B1CDDA9F1119}.Release|Win32.ActiveCfg = Release|Win32
+		{6413B300-0A6F-4A11-A78A-B1CDDA9F1119}.Release|Win32.Build.0 = Release|Win32
+		{6413B300-0A6F-4A11-A78A-B1CDDA9F1119}.ReleaseGLES|Win32.ActiveCfg = ReleaseGLES|Win32
+		{6413B300-0A6F-4A11-A78A-B1CDDA9F1119}.ReleaseGLES|Win32.Build.0 = ReleaseGLES|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

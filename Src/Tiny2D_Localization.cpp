@@ -32,7 +32,7 @@ bool Localization::LoadSet(const std::string& name)
 {
 	const std::string path = name + "_" + App::GetLanguageSymbol() + ".translations.xml";
 
-	XMLDocument doc;
+	XMLDoc doc;
 	if (!doc.Load(path))
 	{
 		Log::Error("Failed to load localization set from " + path);

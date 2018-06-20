@@ -2,16 +2,12 @@
 
 #include <list>
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include <SDL_ttf.h>
-#include <SDL_rwops.h>
+#include "SDL.h"
+#include "SDL_image.h"
+#include "SDL_mixer.h"
+#include "SDL_ttf.h"
 
-#include <OGGVorbis\stb_vorbis.h>
-
-#include <cstdlib>
-#include <csignal>
+#include "stb_vorbis.h"
 
 #ifndef OPENGL_ES
 	#define GL_PROC(type, func) type func = NULL;
@@ -520,11 +516,7 @@ void App::RunCommand(const std::string& command)
 #if defined(__WIN32__) || defined(__WIN64__)
 	ShellExecuteA(NULL, "open", command.c_str(), NULL, NULL, SW_SHOWNORMAL);
 #elif defined(__MACOSX__) || defined(__LINUX__)
-	int ret = system(command.c_str());
-	if (WIFSIGNALED(ret) && (WTERMSIG(ret) == SIGINT || WTERMSIG(ret) == SIGQUIT))
-	{
-		/* SIGINT or SIGQUIT triggered */
-	}
+	system(command.c_str());
 #else
 	Log::Warn("App::RunCommand() not implemented on current platform");
 #endif
@@ -1017,7 +1009,7 @@ TextureObj* Texture_Create(const std::string& name, bool immediate)
 
 		TextureJobData* jobData = new TextureJobData();
 		jobData->resource = resource;
-		resource->jobID = JobSystem::RunJob(Texture_JobFunc, Texture_DoneFunc, jobData);
+		resource->jobID = Jobs::RunJob(Texture_JobFunc, Texture_DoneFunc, jobData);
 	}
 
 	return resource;
@@ -1228,7 +1220,7 @@ SoundObj* Sound_Create(const std::string& name, bool isMusic, bool immediate)
 			jobData->resource = resource;
 			jobData->isMusic = isMusic;
 
-			resource->jobID = JobSystem::RunJob(SoundResource_JobFunc, SoundResource_DoneFunc, jobData);
+			resource->jobID = Jobs::RunJob(SoundResource_JobFunc, SoundResource_DoneFunc, jobData);
 		}
 	}
 
@@ -1259,7 +1251,7 @@ void Sound_Destroy(SoundObj* sound, float fadeOutTime)
 	if (!Resource_DecRefCount(sound->resource))
 	{
 		if (sound->resource->state == ResourceState_Creating)
-			JobSystem::CancelJob(sound->resource->jobID);
+			Jobs::CancelJob(sound->resource->jobID);
 
 		if (sound->resource->chunk)
 		{
@@ -1593,13 +1585,13 @@ void Font_CalculateSize(FontObj* font, const Text::DrawParams* params, float& wi
 	height = (float) heightInt;
 }
 
-// Asynchronous job system
+// Asynchronous stuff
 
 struct Job
 {
-	JobSystem::JobID id;
-	JobSystem::JobFunc jobFunc;
-	JobSystem::DoneFunc doneFunc;
+	Jobs::JobID id;
+	Jobs::JobFunc jobFunc;
+	Jobs::DoneFunc doneFunc;
 	void* userData;
 };
 
@@ -1609,7 +1601,7 @@ SDL_Thread* thread = NULL;
 std::list<Job> jobs;
 std::list<Job> doneJobs;
 volatile int numJobs = 0;
-volatile JobSystem::JobID currentJobID = 0;
+volatile Jobs::JobID currentJobID = 0;
 
 int Jobs_MainFunc(void*)
 {
@@ -1662,7 +1654,7 @@ void Jobs_Deinit()
 	jobMutex = NULL;
 }
 
-void JobSystem::UpdateDoneJobs(float maxTime)
+void Jobs::UpdateDoneJobs(float maxTime)
 {
 	const Time::Ticks maxTicks = Time::SecondsToTicks(maxTime);
 	const Time::Ticks startTicks = Time::GetTicks();
@@ -1688,7 +1680,7 @@ void JobSystem::UpdateDoneJobs(float maxTime)
 	}
 }
 
-bool Jobs_IsJobWaiting(JobSystem::JobID id)
+bool Jobs_IsJobWaiting(Jobs::JobID id)
 {
 	SDL_LockMutex(jobMutex);
 	if (currentJobID == id)
@@ -1706,7 +1698,7 @@ bool Jobs_IsJobWaiting(JobSystem::JobID id)
 	return false;
 }
 
-void JobSystem::WaitForJob(JobID id)
+void Jobs::WaitForJob(JobID id)
 {
 	while (Jobs_IsJobWaiting(id))
 		App::Sleep(0.1f);
@@ -1725,13 +1717,13 @@ void JobSystem::WaitForJob(JobID id)
 	SDL_UnlockMutex(jobMutex);
 }
 
-void JobSystem::CancelJob(JobID id)
+void Jobs::CancelJob(JobID id)
 {
 	SDL_LockMutex(jobMutex);
 	if (currentJobID == id)
 	{
 		SDL_UnlockMutex(jobMutex);
-		JobSystem::WaitForJob(id);
+		Jobs::WaitForJob(id);
 		return;
 	}
 	for (std::list<Job>::iterator it = jobs.begin(); it != jobs.end(); ++it)
@@ -1758,18 +1750,18 @@ void JobSystem::CancelJob(JobID id)
 	SDL_UnlockMutex(jobMutex);
 }
 
-int JobSystem::GetNumJobsInProgress()
+int Jobs::GetNumJobsInProgress()
 {
 	return numJobs;
 }
 
-JobSystem::JobID Jobs_GenerateNewJobID()
+Jobs::JobID Jobs_GenerateNewJobID()
 {
-	static JobSystem::JobID id = 1;
+	static Jobs::JobID id = 1;
 	return ++id;
 }
 
-JobSystem::JobID JobSystem::RunJob(JobSystem::JobFunc jobFunc, JobSystem::DoneFunc doneFunc, void* userData)
+Jobs::JobID Jobs::RunJob(Jobs::JobFunc jobFunc, Jobs::DoneFunc doneFunc, void* userData)
 {
 	Job job;
 	job.jobFunc = jobFunc;
@@ -1786,6 +1778,8 @@ JobSystem::JobID JobSystem::RunJob(JobSystem::JobFunc jobFunc, JobSystem::DoneFu
 }
 
 // File
+
+#include "SDL_rwops.h"
 
 FileObj* File_Open(const std::string& name, File::OpenMode openMode)
 {

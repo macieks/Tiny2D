@@ -1,8 +1,8 @@
 #ifndef TINY_2D_OPENGL
 #define TINY_2D_OPENGL
 
-#include <Tiny2D.h>
-#include <Tiny2D_Common.h>
+#include "Tiny2D.h"
+#include "Tiny2D_Common.h"
 
 #ifdef OPENGL_ES
 	#ifdef WIN32
@@ -70,7 +70,7 @@
 	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS
 	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT GL_FRAMEBUFFER_INCOMPLETE_FORMATS
 #else
-	#include <SDL_opengl.h>
+	#include "SDL_opengl.h"
 	#if defined(WIN32) && defined(_MSC_VER)
 		#pragma comment(lib, "opengl32.lib")
 	#endif

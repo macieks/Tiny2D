@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Public">
+      <UniqueIdentifier>{4961708d-3e2c-4110-889d-713f2b929022}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private">
+      <UniqueIdentifier>{8edb1ea2-c265-4541-8202-b3f7608fb08e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\SDL">
+      <UniqueIdentifier>{2f6f90eb-d9ed-4f7c-a2f5-5f81134bdd24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Private\OpenGL">
+      <UniqueIdentifier>{36150290-093c-4ce4-9cc9-3887bf640895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDKs">
+      <UniqueIdentifier>{cd0eb695-a1da-4492-b013-2d5f1f9916c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SDKs\OGGVorbis">
+      <UniqueIdentifier>{0f40da0f-66a5-4342-9a16-2827a059fb5b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Include\Tiny2D.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\Tiny2D_Base.h">
+      <Filter>Public</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\Tiny2D_Common.h">
+      <Filter>Private</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\OpenGL\Tiny2D_OpenGL.h">
+      <Filter>Private\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Src\OpenGL\Tiny2D_OpenGLProcedures.h">
+      <Filter>Private\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\SDKs\OGGVorbis\stb_vorbis.h">
+      <Filter>SDKs\OGGVorbis</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Src\Tiny2D_Common.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Tiny2D_CPPWrappers.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Tiny2D_Localization.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Tiny2D_Particles.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Tiny2D_Postprocessing.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Tiny2D_RapidXML.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Tiny2D_RectPacker.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Tiny2D_Shape.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Tiny2D_Sprite.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\Tiny2D_Unicode.cpp">
+      <Filter>Private</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\SDL\Tiny2D_SDL.cpp">
+      <Filter>Private\SDL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\OpenGL\Tiny2D_OpenGL.cpp">
+      <Filter>Private\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\OpenGL\Tiny2D_OpenGLES.cpp">
+      <Filter>Private\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Src\OpenGL\Tiny2D_OpenGLMaterial.cpp">
+      <Filter>Private\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\SDKs\OGGVorbis\stb_vorbis.cpp">
+      <Filter>SDKs\OGGVorbis</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
