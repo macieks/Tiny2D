@@ -300,6 +300,9 @@ namespace Tiny2D
 	extern int g_numTouches;
 	#define MAX_TOUCHES 10
 	extern Input::Touch g_touches[MAX_TOUCHES];
+	extern int g_numControllers;
+	#define MAX_CONTROLLERS 8
+	extern Input::ControllerState g_controllers[ MAX_CONTROLLERS ];
 
 	extern Material g_defaultMaterial;
 	extern Font g_defaultFont;
@@ -452,6 +455,14 @@ namespace Tiny2D
 
 	void Input_AddTouch(float x, float y, long long int id);
 	void Input_RemoveTouch(float x, float y, long long int id);
+
+	void Input_SetControllerAxis(int deviceId, Input::ControllerAxis axis, float value);
+	void Input_SetControllerButtonDown(int deviceId, Input::ControllerButton button);
+	void Input_SetControllerButtonUp(int deviceId, Input::ControllerButton button);
+	void Input_AddController(int deviceId);
+	void Input_RemoveController(int deviceId);
+
+	// Misc.
 
 	void Pixels_RGBA_To_RGB(std::vector<unsigned char>& pixels);
 

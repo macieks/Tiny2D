@@ -990,6 +990,48 @@ namespace Tiny2D
 			Key_COUNT
 		};
 
+				enum ControllerButton
+		{
+			ControllerButton_A,
+			ControllerButton_B,
+			ControllerButton_X,
+			ControllerButton_Y,
+			ControllerButton_BACK,
+			ControllerButton_GUIDE,
+			ControllerButton_START,
+			ControllerButton_LEFTSTICK,
+			ControllerButton_RIGHTSTICK,
+			ControllerButton_LEFTSHOULDER,
+			ControllerButton_RIGHTSHOULDER,
+			ControllerButton_DPAD_UP,
+			ControllerButton_DPAD_DOWN,
+			ControllerButton_DPAD_LEFT,
+			ControllerButton_DPAD_RIGHT,
+
+			ControllerButton_LEFTSTICK_Left,
+			ControllerButton_LEFTSTICK_Right,
+			ControllerButton_LEFTSTICK_Up,
+			ControllerButton_LEFTSTICK_Down,
+			ControllerButton_RIGHTSTICK_Left,
+			ControllerButton_RIGHTSTICK_Right,
+			ControllerButton_RIGHTSTICK_Up,
+			ControllerButton_RIGHTSTICK_Down,
+
+			ControllerButton_COUNT
+		};
+
+		enum ControllerAxis
+		{
+			ControllerAxis_LEFTX,
+			ControllerAxis_LEFTY,
+			ControllerAxis_RIGHTX,
+			ControllerAxis_RIGHTY,
+			ControllerAxis_TRIGGERLEFT,
+			ControllerAxis_TRIGGERRIGHT,
+
+			ControllerAxis_COUNT
+		};
+
 		//! Touch (on touchpad) description; touch is alive (and has persistent id) from the time of touch until it gets released
 		struct Touch
 		{
@@ -1009,6 +1051,23 @@ namespace Tiny2D
 		{
 			Vec2 position;						//!< Mouse coordinates (with x ranging from 0 to App::GetWidth() and y randing from 0 to App::GetHeight())
 			Vec2 movement;						//!< Mouse offset
+		};
+
+		//! Game controller state
+		struct ControllerState
+		{
+			int deviceId;							//!< Device id
+			float axis[ ControllerAxis_COUNT ];		//!< Analog axis values within -1..1 range
+			unsigned int buttonState[ ControllerButton_COUNT ]; //!< Button states; prefer using Is/Was-Button-Down/Pressed/Released() functions instead of accessing this array directly
+
+			//! Gets whether given button is currently being pressed
+			inline bool			IsButtonDown(ControllerButton button) const { return (buttonState[button] & KeyState_IsDown) != 0; }
+			//! Gets whether given button was pressed last frame
+			inline bool			WasButtonDown(ControllerButton button) const { return (buttonState[button] & KeyState_WasDown) != 0; }
+			//! Gets whether given button has just been pressed
+			inline bool			WasButtonPressed(ControllerButton button) const { return buttonState[button] == KeyState_IsDown; }
+			//! Gets whether given button has just been released
+			inline bool			WasButtonReleased(ControllerButton button) const { return buttonState[button] == KeyState_WasDown; }
 		};
 
 		//! Gets key state; return combination of KeyState flags
@@ -1037,6 +1096,11 @@ namespace Tiny2D
 		static bool					WasTouchpadDown();
 		//! Gets whether touchpad has just been touched
 		static bool					WasTouchpadPressed();
+		//! Gets number of controller devices
+		static int					GetNumControllers();
+		//! Gets controller device state
+		static const ControllerState& GetControllerState(int index);
+		static const ControllerState* FindControllerState(int deviceId);
 	};
 
 	//! Pool of render textures for convenient reuse between subsystems

@@ -38,6 +38,7 @@ Uint64 g_timer;
 Uint64 g_timerFrequency;
 
 std::map<int, Input::Key> g_sdlToTinyKey;
+std::map<int, Input::ControllerButton> g_sdlToTinyControllerButton;
 
 #define MAX_AUDIO_CHANNELS 16
 SoundObj* g_channelChunks[MAX_AUDIO_CHANNELS] = {0};
@@ -112,6 +113,8 @@ bool App_PreStartup()
 }
 
 #define App_MapKey(key, sdlKey) g_sdlToTinyKey[(int) sdlKey] = Input::key;
+
+#define App_MapControllerButton(controllerButton, sdlControllerButton) g_sdlToTinyControllerButton[(int) sdlControllerButton] = Input::controllerButton;
 
 bool App::ModifyDisplaySettings(const App::DisplaySettings& settings)
 {
@@ -400,6 +403,33 @@ bool App_Startup(App::StartupParams* params)
 	g_wasTouchpadDown = false;
 	g_wasTouchPressed = false;
 
+	App_MapControllerButton(ControllerButton_A, SDL_CONTROLLER_BUTTON_A);
+	App_MapControllerButton(ControllerButton_B, SDL_CONTROLLER_BUTTON_B);
+	App_MapControllerButton(ControllerButton_X, SDL_CONTROLLER_BUTTON_X);
+	App_MapControllerButton(ControllerButton_Y, SDL_CONTROLLER_BUTTON_Y);
+	App_MapControllerButton(ControllerButton_BACK, SDL_CONTROLLER_BUTTON_BACK);
+	App_MapControllerButton(ControllerButton_GUIDE, SDL_CONTROLLER_BUTTON_GUIDE);
+	App_MapControllerButton(ControllerButton_START, SDL_CONTROLLER_BUTTON_START);
+	App_MapControllerButton(ControllerButton_LEFTSTICK, SDL_CONTROLLER_BUTTON_LEFTSTICK);
+	App_MapControllerButton(ControllerButton_RIGHTSTICK, SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+	App_MapControllerButton(ControllerButton_LEFTSHOULDER, SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+	App_MapControllerButton(ControllerButton_RIGHTSHOULDER, SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+	App_MapControllerButton(ControllerButton_DPAD_UP, SDL_CONTROLLER_BUTTON_DPAD_UP);
+	App_MapControllerButton(ControllerButton_DPAD_DOWN, SDL_CONTROLLER_BUTTON_DPAD_DOWN);
+	App_MapControllerButton(ControllerButton_DPAD_LEFT, SDL_CONTROLLER_BUTTON_DPAD_LEFT);
+	App_MapControllerButton(ControllerButton_DPAD_RIGHT, SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
+
+	// Detect controllers
+
+	for ( int i = 0; i < SDL_NumJoysticks(); i++ )
+	{
+		if ( SDL_IsGameController(i) )
+		{
+			Input_AddController(i);
+			SDL_GameControllerOpen(i);
+		}
+	}
+
 	// Initialize cursor
 
 	Log::Info("Initializing mouse");
@@ -543,6 +573,17 @@ void App_ProcessEvents()
 		else
 			g_keyStates[i] &= ~Input::KeyState_WasDown;
 
+	for ( int c = 0; c < g_numControllers; ++c )
+	{
+		Input::ControllerState& state = g_controllers[ c ];
+
+		for (int i = 0; i < Input::ControllerButton_COUNT; i++)
+			if (state.buttonState[i] & Input::KeyState_IsDown)
+				state.buttonState[i] |= Input::KeyState_WasDown;
+			else
+				state.buttonState[i] &= ~Input::KeyState_WasDown;
+	}
+
 	// Handle events
 
 	bool justRegainedFocus = false;
@@ -620,6 +661,37 @@ void App_ProcessEvents()
 					case SDL_BUTTON_RIGHT: g_keyStates[Input::Key_MouseRight] &= ~Input::KeyState_IsDown; break;
                 }
 				break;
+			case SDL_CONTROLLERAXISMOTION:
+				{
+					Input::ControllerAxis axis;
+					switch (e.caxis.axis)
+					{
+						case SDL_CONTROLLER_AXIS_LEFTX: axis = Input::ControllerAxis_LEFTX; break;
+						case SDL_CONTROLLER_AXIS_LEFTY: axis = Input::ControllerAxis_LEFTY; break;
+						case SDL_CONTROLLER_AXIS_RIGHTX: axis = Input::ControllerAxis_RIGHTX; break;
+						case SDL_CONTROLLER_AXIS_RIGHTY: axis = Input::ControllerAxis_RIGHTY; break;
+						case SDL_CONTROLLER_AXIS_TRIGGERLEFT: axis = Input::ControllerAxis_TRIGGERLEFT; break;
+						case SDL_CONTROLLER_AXIS_TRIGGERRIGHT: axis = Input::ControllerAxis_TRIGGERRIGHT; break;
+						default: continue;
+					}
+					Input_SetControllerAxis( e.caxis.which, axis, ( float ) e.caxis.value / ( float ) 32767.5f );
+				}
+				break;
+			case SDL_CONTROLLERBUTTONUP:
+			case SDL_JOYBUTTONUP:
+				Input_SetControllerButtonUp( e.cbutton.which, g_sdlToTinyControllerButton[ e.cbutton.button ]);
+				break;
+			case SDL_CONTROLLERBUTTONDOWN:
+			case SDL_JOYBUTTONDOWN:
+				Input_SetControllerButtonDown( e.cbutton.which, g_sdlToTinyControllerButton[ e.cbutton.button ]);
+				break;
+			case SDL_CONTROLLERDEVICEADDED:
+				Input_AddController( e.cdevice.which );
+				SDL_GameControllerOpen( e.cdevice.which );
+				break;
+			case SDL_CONTROLLERDEVICEREMOVED:
+				Input_RemoveController( e.cdevice.which );
+				break;
 			case SDL_FINGERDOWN:
 				Input_AddTouch(e.tfinger.x, e.tfinger.y, e.tfinger.fingerId);
 				g_wasTouchPressed = true;
@@ -634,6 +706,28 @@ void App_ProcessEvents()
 	g_keyStates[Input::Key_Alt] = g_keyStates[Input::Key_LeftAlt] | g_keyStates[Input::Key_RightAlt];
 	g_keyStates[Input::Key_Control] = g_keyStates[Input::Key_LeftControl] | g_keyStates[Input::Key_RightControl];
 	g_keyStates[Input::Key_Shift] = g_keyStates[Input::Key_LeftShift] | g_keyStates[Input::Key_RightShift];
+
+	for ( int c = 0; c < g_numControllers; ++c )
+	{
+		Input::ControllerState& state = g_controllers[ c ];
+
+		auto UpdateVirtualControllerButton = [&state](bool set, Input::ControllerButton button)
+		{
+			if (set)
+				state.buttonState[button] |= Input::KeyState_IsDown;
+			else
+				state.buttonState[button] &= ~Input::KeyState_IsDown;
+		};
+
+		UpdateVirtualControllerButton( state.axis[Input::ControllerAxis_LEFTX] < -0.15f, Input::ControllerButton_LEFTSTICK_Left );
+		UpdateVirtualControllerButton( state.axis[Input::ControllerAxis_LEFTX] > 0.15f, Input::ControllerButton_LEFTSTICK_Right );
+		UpdateVirtualControllerButton( state.axis[Input::ControllerAxis_LEFTY] < -0.15f, Input::ControllerButton_LEFTSTICK_Down );
+		UpdateVirtualControllerButton( state.axis[Input::ControllerAxis_LEFTY] > 0.15f, Input::ControllerButton_LEFTSTICK_Up );
+		UpdateVirtualControllerButton( state.axis[Input::ControllerAxis_RIGHTX] < -0.15f, Input::ControllerButton_RIGHTSTICK_Left );
+		UpdateVirtualControllerButton( state.axis[Input::ControllerAxis_RIGHTX] > 0.15f, Input::ControllerButton_RIGHTSTICK_Right );
+		UpdateVirtualControllerButton( state.axis[Input::ControllerAxis_RIGHTY] < -0.15f, Input::ControllerButton_RIGHTSTICK_Down );
+		UpdateVirtualControllerButton( state.axis[Input::ControllerAxis_RIGHTY] > 0.15f, Input::ControllerButton_RIGHTSTICK_Up );
+	}
 
 	// Update mouse
 

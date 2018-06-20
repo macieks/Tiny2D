@@ -62,6 +62,8 @@ bool g_wasTouchPressed = false;
 bool g_wasTouchpadDown = false;
 int g_numTouches = 0;
 Input::Touch g_touches[MAX_TOUCHES];
+int g_numControllers = 0;
+Input::ControllerState g_controllers[ MAX_CONTROLLERS ];
 
 Material g_defaultMaterial;
 Font g_defaultFont;
@@ -539,6 +541,86 @@ bool Input::WasTouchpadPressed()
 {
 	return g_wasTouchPressed;
 }
+
+int Input::GetNumControllers()
+{
+	return g_numControllers;
+}
+
+const Input::ControllerState& Input::GetControllerState(int index)
+{
+	return g_controllers[ index ];
+}
+
+int Input_FindControllerStateIndex(int deviceId)
+{
+	for ( int i = 0; i < g_numControllers; ++i )
+	{
+		if ( g_controllers[ i ].deviceId == deviceId )
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+const Input::ControllerState* Input::FindControllerState(int deviceId)
+{
+	int index = Input_FindControllerStateIndex(deviceId);
+	return index == -1 ? nullptr : &g_controllers[ index ];
+}
+
+void Input_SetControllerAxis(int deviceId, Input::ControllerAxis _axis, float value)
+{
+	if ( Input::ControllerState* state = const_cast< Input::ControllerState* >( Input::FindControllerState( deviceId ) ) )
+	{
+		if ( fabsf( value ) < 0.15f )
+			value = 0.0f;
+		state->axis[ _axis ] = value;
+	}
+}
+
+void Input_SetControllerButtonDown(int deviceId, Input::ControllerButton button)
+{
+	if ( Input::ControllerState* state = const_cast< Input::ControllerState* >( Input::FindControllerState( deviceId ) ) )
+	{
+		state->buttonState[ button ] |= Input::KeyState_IsDown;
+	}
+}
+
+void Input_SetControllerButtonUp(int deviceId, Input::ControllerButton button)
+{
+	if ( Input::ControllerState* state = const_cast< Input::ControllerState* >( Input::FindControllerState( deviceId ) ) )
+	{
+		state->buttonState[ button ] &= ~Input::KeyState_IsDown;
+	}
+}
+
+void Input_AddController(int deviceId)
+{
+	if ( Input::FindControllerState( deviceId ) )
+	{
+		return;
+	}
+	if ( g_numControllers == MAX_CONTROLLERS )
+	{
+		return;
+	}
+	Input::ControllerState& state = g_controllers[ g_numControllers++ ];
+	memset( &state, 0, sizeof( state ) );
+	state.deviceId = deviceId;
+}
+
+void Input_RemoveController(int deviceId)
+{
+	int index = Input_FindControllerStateIndex(deviceId);
+	if ( index == -1 )
+	{
+		return;
+	}
+	g_controllers[ index ] = g_controllers[ --g_numControllers ];
+}
+
 
 // Timer
 
