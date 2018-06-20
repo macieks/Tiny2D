@@ -823,10 +823,10 @@ namespace Tiny2D
 		public: \
 			Tiny2DInitializer() \
 			{ \
-				extern void SetCreateTiny2DAppCallbacks(App::Callbacks* (*func)()); \
+				extern void SetCreateTiny2DAppCallbacks(Tiny2D::App::Callbacks* (*func)()); \
 				SetCreateTiny2DAppCallbacks(CreateAppCallbacks); \
 			} \
-			static App::Callbacks* CreateAppCallbacks() { return new className(); } \
+			static Tiny2D::App::Callbacks* CreateAppCallbacks() { return new className(); } \
 		}; \
 		const Tiny2DInitializer g_initializer;
 
