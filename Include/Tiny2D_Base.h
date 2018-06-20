@@ -42,6 +42,9 @@ namespace Tiny2D
 		#define ENABLE_LOGGING
 	#endif
 
+	//! String formatting helper function
+	std::string string_format(const char* format, ...);
+
 	// Forward declarations of internal object types
 	struct TextureObj;
 	struct EffectObj;
@@ -50,7 +53,7 @@ namespace Tiny2D
 	struct MaterialObj;
 	struct SpriteObj;
 	struct FileObj;
-	struct XMLDocumentObj;
+	struct XMLDocObj;
 
 	//! Color with RGBA components
 	struct Color
@@ -170,6 +173,16 @@ namespace Tiny2D
 			top -= (newHeight - height) * 0.5f;
 			width = newWidth;
 			height = newHeight;
+		}
+
+		//! Intersects two rectangles
+		inline bool Intersect( const Rect& other ) const
+		{
+			return !(
+				left > other.Right() ||
+				Right() < other.left ||
+				top > other.Bottom() ||
+				Bottom() < other.top );
 		}
 	};
 
@@ -347,8 +360,9 @@ namespace Tiny2D
 			{
 				const float oldLength = Length();
 				const float oldLengthInv = 1.0f / oldLength;
-				x *= oldLengthInv;
-				y *= oldLengthInv;
+				const float lengthScale = oldLengthInv * length;
+				x *= lengthScale;
+				y *= lengthScale;
 				return oldLength;
 			}
 		}

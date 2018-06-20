@@ -1,5 +1,5 @@
 /*
-  Tiny2D Library (version 1.1)
+  Tiny2D Library (version 1.0)
   Copyright (C) 2014 Maciej Sawitus <contact@pixelelephant.com>
 
   This software is provided 'as-is', without any express or implied
@@ -131,13 +131,13 @@ namespace Tiny2D
 	};
 
 	//! XML document either loaded from path or created at runtime
-	class XMLDocument
+	class XMLDoc
 	{
 	public:
 		//! Creates empty XML document
-		XMLDocument();
+		XMLDoc();
 		//! Destroys XML document
-		~XMLDocument();
+		~XMLDoc();
 		//! Loads XML document from given path
 		bool Load(const std::string& path);
 		//! Creates XML document with just root node containing version and encoding information
@@ -149,9 +149,9 @@ namespace Tiny2D
 		//! Gets this XML document as an XML node
 		XMLNode* AsNode();
 	private:
-		XMLDocument(XMLDocument&);
-		void operator = (XMLDocument&);
-		XMLDocumentObj* doc;
+		XMLDoc(XMLDoc&);
+		void operator = (XMLDoc&);
+		XMLDocObj* doc;
 	};
 
 	//! Renderable shape utilities
@@ -680,10 +680,10 @@ namespace Tiny2D
 		struct StartupParams : DisplaySettings
 		{
 			std::string name;				//!< Application name
-			std::vector<std::string> rootDataDirs;		//!< Root data directories containing all app data files listed in order from the highest to lowest priority; defaults to different paths depending on platform so as to include both common and app data
+			std::vector<std::string> rootDataDirs;		//!< Root data directories listed in order from the highest to lowest priority
 			std::string languageSymbol;		//!< Language symbol (used for text localization); defaults to "EN"
 			std::string defaultMaterialName;//!< Name of the default material to be loaded at app startup; defaults to "common/default"
-			std::string defaultFontName;	//!< Name of the default font to be loaded at app startup; defaults to "common/jackinput.ttf"
+			std::string defaultFontName;	//!< Name of the default font to be loaded at app startup; defaults to "common/courbd.ttf"
 			int defaultFontSize;			//!< Default font size; defaults to 16
 			std::string defaultCursorName;	//!< Default cursor texture (or sprite) name; defaults to "common/cursor.png"
 			bool showMessageBoxOnWarning;	//!< Show message box on every warning?; defaults to false
@@ -745,7 +745,7 @@ namespace Tiny2D
 
 		//! Changes application display settings (resolution, fullscreen mode etc.)
 		static bool					ModifyDisplaySettings(const DisplaySettings& settings);
-		//! Quits an app (before the next update, not immediately)
+		//! Quits an app
 		static void					Quit();
 		//! Gets root data directory
 		static const std::vector<std::string>&	GetRootDataDirs();
@@ -792,9 +792,9 @@ namespace Tiny2D
 
 				Type_COUNT
 			};
-			Type type;					//!< Parameter type; do not set directly, use appropriate Param constructor instead
-			int intValue;				//!< Integer value; do not set directly, use appropriate Param constructor instead
-			std::string stringValue;	//!< String value; do not set directly, use appropriate Param constructor instead
+			Type type;					//!< Parameter type
+			int intValue;				//!< Integer value
+			std::string stringValue;	//!< String value	
 
 			//! Constructs uninitialized localization parameter
 			Param();
@@ -817,7 +817,7 @@ namespace Tiny2D
 	};
 
 	//! Defines application callback class
-	#define TINY2D_DEFINE_APP(className) \
+	#define DEFINE_APP(className) \
 		class Tiny2DInitializer \
 		{ \
 		public: \
@@ -826,13 +826,12 @@ namespace Tiny2D
 				extern void SetCreateTiny2DAppCallbacks(App::Callbacks* (*func)()); \
 				SetCreateTiny2DAppCallbacks(CreateAppCallbacks); \
 			} \
-		private: \
 			static App::Callbacks* CreateAppCallbacks() { return new className(); } \
 		}; \
 		const Tiny2DInitializer g_initializer;
 
 	//! Asynchronous job system
-	class JobSystem
+	class Jobs
 	{
 	public:
 		//! Unique job identifier
@@ -847,7 +846,7 @@ namespace Tiny2D
 		static JobID	RunJob(JobFunc jobFunc, DoneFunc doneFunc, void* userData);
 		//! Gets number of jobs still in progress
 		static int		GetNumJobsInProgress();
-		//! Updates jobs that require main thread update; invoked automatically each frame before app update
+		//! Updates jobs that require main thread update
 		static void		UpdateDoneJobs(float maxUpdateTime = 1.0f / 120.0f);
 		//! Waits for a particular job to complete
 		static void		WaitForJob(JobID id);
