@@ -14,23 +14,22 @@ via open-source Angleproject OpenGLES implementation.
 
 Tiny2D provides C++ interface for the following functionality:
 
-- Textures (png, jpg and more)
-- Materials with Techniques and (GLSL) Shaders
+- Textures
 - Animated Sprites
+- Materials with Techniques via GLSL Shaders
 - Particle Effects
 - Render Targets
-- Several built-in Post-Processing Filters
 - Asynchronous Resource Loading
-- Virtual Resolution Rendering
 - True Type Fonts
-- Audio (wav, ogg, mp3 and more)
-- Input (keyboard, mouse, touchpad)
+- Audio
+- Input (keyboard, mouse, touchpad, controller)
 - Files
-- XML (via RapidXML library)
+- XML
 - Localization
 - Multithreaded Job System
 - Timer
 - Random Numbers
+- Several built-in Post-Processing Filters
 
 ## Links
 
@@ -40,8 +39,4 @@ Getting Started: http://tiny2d.pixelelephant.com/getting_started.html
 
 Features: http://tiny2d.pixelelephant.com/features.html
 
-Discussion Forum:
-http://tiny2d.lefora.com
-
-Developer Blog:
-http://gamedevcoder.wordpress.com
+Developer Blog: http://gamedevcoder.wordpress.com
